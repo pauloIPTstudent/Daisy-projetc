@@ -1,3 +1,3 @@
 python -m venv
-flask\Scripts\activate
+venv\Scripts\activate
 deactivate

@@ -1,24 +1,24 @@
 ### POST com JSON
-POST https://dam-api-ribg.onrender.com/create_account
+POST http://localhost:5000/create_account
 Content-Type: application/json
 
 {
-  "email": "user5@email.com",
+  "email": "user3@email.com",
   "password": "123qwe#"
 }
 ### POST para login
-POST https://dam-api-ribg.onrender.com/login
+POST http://localhost:5000/login
 Content-Type: application/json
 
 {
-  "email": "user5@email.com",
+  "email": "user3@email.com",
   "password": "123qwe#"
 }
 ### GET com Token no Header
-GET https://dam-api-ribg.onrender.com/listuserplants  
+GET http://localhost:5000/listuserplants  
 Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
 ### POST com JSON e Token no Header
-POST https://dam-api-ribg.onrender.com/createplant
+POST http://localhost:5000/createplant
 Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
 Content-Type: application/json
 
@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### POST com JSON e Token no Header
-PUT https://dam-api-ribg.onrender.com/editplant
+PUT http://localhost:5000/editplant
 Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
 Content-Type: application/json
 
@@ -40,7 +40,7 @@ Content-Type: application/json
   "description": "A vibrant yellow tulip"
 }
 ### DELETE com JSON e Token no Header
-DELETE https://dam-api-ribg.onrender.com/deleteplant
+DELETE http://localhost:5000/deleteplant
 Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
 Content-Type: application/json
 
@@ -49,7 +49,7 @@ Content-Type: application/json
 }
 
 ### GET com Token no Header
-POST https://dam-api-ribg.onrender.com/sensor_reading
+POST http://localhost:5000/sensor_reading
 Content-Type: application/json
 
 {
@@ -58,7 +58,7 @@ Content-Type: application/json
   "light": 45.7
 }
 ### POST com JSON
-GET https://dam-api-ribg.onrender.com/readings
+GET http://localhost:5000/readings
 Content-Type: application/json
 
 {
