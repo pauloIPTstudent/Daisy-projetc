@@ -5,14 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.daisyapp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk  = 34
 
     defaultConfig {
         applicationId = "com.example.daisyapp"
         minSdk = 25
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
