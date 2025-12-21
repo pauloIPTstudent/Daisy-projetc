@@ -1,0 +1,69 @@
+### POST com JSON
+POST http://localhost:5000/create_account
+Content-Type: application/json
+
+{
+  "email": "user3@email.com",
+  "password": "123qwe#"
+}
+### POST para login
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+  "email": "user3@email.com",
+  "password": "123qwe#"
+}
+### GET com Token no Header
+GET http://localhost:5000/listuserplants  
+Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+### POST com JSON e Token no Header
+POST http://localhost:5000/createplant
+Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Content-Type: application/json
+
+{
+  "name": "Rose",
+  "species": "Rosa damascena",
+  "description": "A beautiful red rose"
+}
+
+### POST com JSON e Token no Header
+PUT http://localhost:5000/editplant
+Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Tulip",
+  "species": "Tulipa gesneriana",
+  "description": "A vibrant yellow tulip"
+}
+### DELETE com JSON e Token no Header
+DELETE http://localhost:5000/deleteplant
+Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Content-Type: application/json
+
+{
+  "id": 3
+}
+
+### GET com Token no Header
+POST http://localhost:5000/sensor_reading
+Content-Type: application/json
+
+{
+  "plant_id": 2,
+  "humidity": 80.5,
+  "light": 45.7
+}
+### POST com JSON
+GET http://localhost:5000/readings
+Content-Type: application/json
+
+{
+  "plant_id": 2,
+  "start_time": "2025-12-20T00:00:00Z",
+  "end_time": "2025-12-22T00:00:00Z"
+}
+
