@@ -1,7 +1,7 @@
 package com.example.daisyapp
 
-import LoginRequest
-import LoginResponse
+import AuthRequest
+import AuthResponse
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,10 +13,10 @@ import android.widget.TextView
 import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.Callback
-import retrofit2.converter.gson.GsonConverterFactory
 import RetrofitClient
+import android.content.Intent
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -57,17 +57,26 @@ class SingInFragment : Fragment() {
             // forma o 'request' com os dados dos campos de email e password
             val email = view.findViewById<TextView>(R.id.etEmail).text.toString()
             val password = view.findViewById<TextView>(R.id.etPassword).text.toString()
-            val request = LoginRequest(email, password)
+            val request = AuthRequest(email, password)
 
             // faz um pedido de login com os parametros recolhidos anteriormente
-            RetrofitClient.instance.login(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+            RetrofitClient.instance.login(request).enqueue(object : Callback<AuthResponse> {
+                override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                     if (response.isSuccessful) {
                         val token = response.body()?.token
                         // SUCESSO: Guarda o token e muda de ecrã
                         //Log.d("API_DEBUG", "Token recebido: $token")
-                        SessionManager.saveAuthToken(requireContext(), token.toString())
-                        Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
+                        if (token != null) {
+                            // Guardar o token no nosso Singleton de sessão
+                            SessionManager.saveAuthToken(requireContext(), token)
+
+                            Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
+
+                            // Ir para a MainActivity
+                            val intent = Intent(requireContext(), MainActivity::class.java)
+                            startActivity(intent)
+                            requireActivity().finish()
+                        }
                     } else {
                         // ERRO: Credenciais inválidas (ex: 401)
                         Toast.makeText(context, R.string.api_login_error400, Toast.LENGTH_SHORT).show()
@@ -75,7 +84,7 @@ class SingInFragment : Fragment() {
                         Log.e("API_ERROR", "Código: ${response.code()} - Erro: $errorBody")                    }
                 }
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
                     // ERRO DE REDE: Sem internet ou servidor offline
                     Toast.makeText(context, R.string.api_login_conectivity_error, Toast.LENGTH_SHORT).show()
                     Log.e("API_ERROR", "Erro: ${t.message}")
@@ -89,7 +98,6 @@ class SingInFragment : Fragment() {
             parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, SingUpFragment()) // R.id.fragment_container é o ID do container na AuthActivity
             //.addToBackStack(null) // Permite que o utilizador volte ao Login ao carregar no botão "Retroceder"
-            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out) // Opcional: Adiciona uma animação suave
             .commit()
 
         }
