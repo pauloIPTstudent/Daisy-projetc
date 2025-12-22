@@ -11,9 +11,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val userauth = true
 
-        if (userauth) {
+        if (!isLogged()) {
             gotoAuth()
         }
     }
@@ -21,5 +20,8 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish() // impede voltar para a MainActivity
+    }
+    private fun isLogged(): Boolean {
+        return SessionManager.hasToken(this)
     }
 }

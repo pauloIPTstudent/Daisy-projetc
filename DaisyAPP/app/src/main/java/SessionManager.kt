@@ -20,6 +20,14 @@ object SessionManager {
         prefs.edit().putString(KEY_TOKEN, token).apply()
     }
 
+    fun hasToken(context: Context): Boolean {
+        val prefs = getSharedPreferences(context)
+        val token = prefs.getString(KEY_TOKEN, null)
+
+        // Retorna true se o token existir (não for nulo), false caso contrário
+        return token != null
+    }
+
     fun fetchAuthToken(context: Context): String? {
         val prefs = getSharedPreferences(context)
         return prefs.getString(KEY_TOKEN, null)
