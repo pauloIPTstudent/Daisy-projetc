@@ -16,7 +16,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.Callback
 import retrofit2.converter.gson.GsonConverterFactory
-
+import RetrofitClient
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -50,22 +50,17 @@ class SingInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Supondo que você tenha um botão com id "buttonSignIn" no fragment_sing_in.xml
+        // Associa ação ao botão btnSingIn
         val buttonSignIn = view.findViewById<Button>(R.id.btnSignIn)
         buttonSignIn.setOnClickListener {
 
-            val retrofit = Retrofit.Builder()
-                .baseUrl("https://dam-api-ribg.onrender.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val apiService = retrofit.create(ApiService::class.java)
+            // forma o 'request' com os dados dos campos de email e password
             val email = view.findViewById<TextView>(R.id.etEmail).text.toString()
             val password = view.findViewById<TextView>(R.id.etPassword).text.toString()
-
             val request = LoginRequest(email, password)
 
-            apiService.login(request).enqueue(object : Callback<LoginResponse> {
+            // faz um pedido de login com os parametros recolhidos anteriormente
+            RetrofitClient.instance.login(request).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful) {
                         val token = response.body()?.token
