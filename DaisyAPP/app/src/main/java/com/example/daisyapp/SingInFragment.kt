@@ -66,8 +66,8 @@ class SingInFragment : Fragment() {
                         val token = response.body()?.token
                         // SUCESSO: Guarda o token e muda de ecrã
                         //Log.d("API_DEBUG", "Token recebido: $token")
+                        SessionManager.saveAuthToken(requireContext(), it)
                         Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
-
                     } else {
                         // ERRO: Credenciais inválidas (ex: 401)
                         Toast.makeText(context, R.string.api_login_error400, Toast.LENGTH_SHORT).show()
