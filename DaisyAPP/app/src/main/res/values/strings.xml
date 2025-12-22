@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">DaisyAPP</string>
+    <!-- Strings related to sing in e sing up -->
+    <string name="sign_in">Sign In</string>
+    <string name="email">Email</string>
+    <string name="sing_in_msg">Hi there! Nice to see you again.</string>
+    <string name="email_placeholder">example@email.com</string>
+    <string name="password">Password</string>
+    <string name="password_placeholder">••••••••••••</string>
+    <string name="sign_in_action">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sing_up_msg">Welcome to Daisy Mobile</string>
+    <string name="sign_up_action">Sign Up</string>
+    <string name="already_have_an_account">Have an account?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
 </resources>
