@@ -12,11 +12,12 @@
     <string name="sign_up">Sign Up</string>
     <string name="sing_up_msg">Welcome to Daisy Mobile</string>
     <string name="sign_up_action">Sign Up</string>
-    <string name="already_have_an_account">Have an account?</string>
+    <string name="already_have_an_account">Have an account? SingIn</string>
     <!-- API -->
     <string name="api_login_success">Login successful!</string>
     <string name="api_login_error400">Invalid credentials, please try again.</string>
     <string name="api_login_conectivity_error">Invalid credentials, please try again.</string>
+    <string name="api_register_success">Account created successfully!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 
