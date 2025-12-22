@@ -1,12 +1,22 @@
 package com.example.daisyapp
 
+import LoginRequest
+import LoginResponse
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-
+import android.widget.TextView
+import android.widget.Toast
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.Callback
+import retrofit2.converter.gson.GsonConverterFactory
+import RetrofitClient
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -40,11 +50,37 @@ class SingInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Supondo que você tenha um botão com id "buttonSignIn" no fragment_sing_in.xml
+        // Associa ação ao botão btnSingIn
         val buttonSignIn = view.findViewById<Button>(R.id.btnSignIn)
         buttonSignIn.setOnClickListener {
 
+            // forma o 'request' com os dados dos campos de email e password
+            val email = view.findViewById<TextView>(R.id.etEmail).text.toString()
+            val password = view.findViewById<TextView>(R.id.etPassword).text.toString()
+            val request = LoginRequest(email, password)
 
+            // faz um pedido de login com os parametros recolhidos anteriormente
+            RetrofitClient.instance.login(request).enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful) {
+                        val token = response.body()?.token
+                        // SUCESSO: Guarda o token e muda de ecrã
+                        //Log.d("API_DEBUG", "Token recebido: $token")
+                        Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        // ERRO: Credenciais inválidas (ex: 401)
+                        Toast.makeText(context, R.string.api_login_error400, Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+                        Log.e("API_ERROR", "Código: ${response.code()} - Erro: $errorBody")                    }
+                }
+
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    // ERRO DE REDE: Sem internet ou servidor offline
+                    Toast.makeText(context, R.string.api_login_conectivity_error, Toast.LENGTH_SHORT).show()
+                    Log.e("API_ERROR", "Erro: ${t.message}")
+                }
+            })
         }
     }
     companion object {
