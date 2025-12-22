@@ -66,7 +66,7 @@ class SingInFragment : Fragment() {
                         val token = response.body()?.token
                         // SUCESSO: Guarda o token e muda de ecrã
                         //Log.d("API_DEBUG", "Token recebido: $token")
-                        SessionManager.saveAuthToken(requireContext(), it)
+                        SessionManager.saveAuthToken(requireContext(), token.toString())
                         Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
                     } else {
                         // ERRO: Credenciais inválidas (ex: 401)
@@ -81,6 +81,17 @@ class SingInFragment : Fragment() {
                     Log.e("API_ERROR", "Erro: ${t.message}")
                 }
             })
+        }
+        //goto singup
+        val buttonSignUp = view.findViewById<TextView>(R.id.tvSignUp)
+        buttonSignUp.setOnClickListener {
+            //troca o fragemento no fragmentConteinerView (AuthActivityview)
+            parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView, SingUpFragment()) // R.id.fragment_container é o ID do container na AuthActivity
+            //.addToBackStack(null) // Permite que o utilizador volte ao Login ao carregar no botão "Retroceder"
+            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out) // Opcional: Adiciona uma animação suave
+            .commit()
+
         }
     }
     companion object {
