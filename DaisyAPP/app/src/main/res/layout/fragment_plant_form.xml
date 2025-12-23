@@ -33,6 +33,7 @@
                 app:cardElevation="0dp">
 
                 <RelativeLayout
+                    android:id="@+id/camera_card"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#F2F2F2">
@@ -44,6 +45,7 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/add_plant_camera_icon"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:src="@drawable/camera" />
@@ -106,6 +108,13 @@
                 android:background="@drawable/bg_edittext_rounded"
                 android:hint="e.g., Monty"
                 android:paddingHorizontal="16dp"/>
+            <Button
+                android:id="@+id/save_plant_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/green"
+                android:text="SAVE"
+                android:layout_marginTop="70dp"/>
         </LinearLayout>
 
 

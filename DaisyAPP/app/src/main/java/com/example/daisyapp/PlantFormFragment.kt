@@ -1,10 +1,22 @@
 package com.example.daisyapp
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,7 +32,17 @@ class PlantFormFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var plantBitmap: Bitmap? = null
+    private lateinit var ivPreview: ImageView // O ImageView dentro do seu CardView
 
+    // 1. Registra o launcher para tirar a foto
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as Bitmap
+            plantBitmap = imageBitmap
+            ivPreview.setImageBitmap(imageBitmap) // Mostra a foto no Card
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -35,6 +57,77 @@ class PlantFormFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_plant_form, container, false)
+    }
+    // Launcher para pedir a permissão de câmera
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Se o usuário aceitou agora, abre a câmera
+            openCamera()
+        } else {
+            Toast.makeText(requireContext(), "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
+        }
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        ivPreview = view.findViewById(R.id.add_plant_camera_icon)
+        val cardPhoto = view.findViewById<View>(R.id.cardPhoto)
+        val btnSave = view.findViewById<Button>(R.id.save_plant_btn)
+        val etPlantName = view.findViewById<EditText>(R.id.etPlantName)
+
+        // 2. Clique no Card para abrir a câmera
+        cardPhoto.setOnClickListener {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            try {
+                checkCameraPermissionAndOpen()
+            } catch (e: ActivityNotFoundException) {
+                // Tratar erro caso não haja app de câmera
+            }
+        }
+
+        // 3. Clique no botão Salvar
+        btnSave.setOnClickListener {
+            val name = etPlantName.text.toString()
+
+            if (plantBitmap != null && name.isNotEmpty()) {
+                // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
+                salvarPlanta(name, plantBitmap!!)
+            } else {
+                Toast.makeText(context, "Preencha o nome e tire uma foto!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun salvarPlanta(nome: String, foto: Bitmap) {
+        // Lógica para salvar no Banco de Dados ou enviar para API
+    }
+    private fun openCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            takePictureLauncher.launch(takePictureIntent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "Câmera não encontrada", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkCameraPermissionAndOpen() {
+        when {
+            // Caso 1: A permissão já foi concedida
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                openCamera()
+            }
+
+            // Caso 2: A permissão ainda não foi pedida ou foi negada antes
+            else -> {
+                requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+            }
+        }
     }
 
     companion object {
