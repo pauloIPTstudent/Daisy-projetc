@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -54,8 +55,15 @@ class YardFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_plants)
         plantAdapter = PlantAdapter(emptyList())
         recyclerView.adapter = plantAdapter        // 2. Chame a função para carregar os dados da API
-
+        val buttonSignIn = view.findViewById<Button>(R.id.btn_add_plant)
+        buttonSignIn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView3, PlantFormFragment()) // R.id.fragment_container é o ID do container na AuthActivity
+                .addToBackStack(null) // Permite que o utilizador volte ao carregar no botão "Retroceder"
+                .commit()
+        }
         loadPlants()
+
     }
     private fun setupRecyclerView(plantList: List<Plant>) {
         plantAdapter.updateData(plantList)
