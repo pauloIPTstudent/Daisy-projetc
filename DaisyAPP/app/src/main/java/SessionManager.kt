@@ -1,4 +1,5 @@
 import android.content.Context
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
@@ -30,6 +31,7 @@ object SessionManager {
 
     fun fetchAuthToken(context: Context): String? {
         val prefs = getSharedPreferences(context)
+        Log.d("Token_DEBUG", "token : ${prefs.getString(KEY_TOKEN, null)}")
         return prefs.getString(KEY_TOKEN, null)
     }
 

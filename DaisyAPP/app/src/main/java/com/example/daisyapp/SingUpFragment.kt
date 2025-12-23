@@ -70,6 +70,9 @@ class SingUpFragment : Fragment() {
                             Toast.makeText(context, R.string.api_register_success, Toast.LENGTH_SHORT).show()
 
                             // Ir para a MainActivity
+                            val intent = Intent(requireContext(), MainActivity::class.java)
+                            startActivity(intent)
+                            requireActivity().finish()
                         }
                     } else {
                         // ERRO: Credenciais inválidas (ex: 401)

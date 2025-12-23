@@ -1,10 +1,12 @@
 package com.example.daisyapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 
@@ -38,7 +40,21 @@ class HomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<ImageView>(R.id.home_logout).setOnClickListener{
+            //apaga key
+            SessionManager.clearSession(requireContext())
+            // 2. Cria a Intent para a MainActivity
+            val intent = Intent(requireContext(), MainActivity::class.java)
 
+            // 3. Limpa a pilha de atividades para que o usuário não consiga voltar
+            // para a tela anterior ao apertar o botão "Voltar" do celular
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            startActivity(intent)
+
+            // 4. (Opcional) Finaliza a instância atual da atividade
+            activity?.finish()
+        }
         /*// Referência para o card de Diagnose
         // Clique no Card Diagnose
         view.findViewById<CardView>(R.id.card_diagnose).setOnClickListener {
@@ -48,12 +64,12 @@ class HomeFragment : Fragment() {
         // Clique no Card Identity
         view.findViewById<CardView>(R.id.card_identity).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_camera)
-        }
+        }// */
 
         // Clique no Card My Yard
         view.findViewById<CardView>(R.id.card_yard).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_yard)
-        }*/
+        }// */
     }
     companion object {
         /**
