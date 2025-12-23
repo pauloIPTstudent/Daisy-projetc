@@ -69,7 +69,7 @@ class SingInFragment : Fragment() {
                         if (token != null) {
                             // Guardar o token no nosso Singleton de sessão
                             SessionManager.saveAuthToken(requireContext(), token)
-
+                            //Log.e("API_DEBUG", "token: ${token}")
                             Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
 
                             // Ir para a MainActivity
