@@ -18,12 +18,14 @@
         app:layout_constraintBottom_toBottomOf="parent">
         <!-- 5 icons espaçados igualmente-->
         <ImageView
+            android:id="@+id/nav_home"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
             android:src="@drawable/home"
             app:tint="#BDBDBD" />
         <ImageView
+            android:id="@+id/nav_diagnose"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
@@ -31,6 +33,7 @@
             app:tint="#BDBDBD" />
 
         <ImageView
+            android:id="@+id/nav_camera"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
@@ -38,6 +41,7 @@
             app:tint="#BDBDBD" />
 
         <ImageView
+            android:id="@+id/nav_yard"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
@@ -45,6 +49,7 @@
             app:tint="#BDBDBD" />
 
         <ImageView
+            android:id="@+id/nav_explore"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
