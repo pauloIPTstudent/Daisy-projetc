@@ -19,6 +19,16 @@
     <string name="api_login_conectivity_error">Invalid credentials, please try again.</string>
     <string name="api_register_success">Account created successfully!</string>
 
+    <!-- Home -->
+    <string name="home_welcome">Welcome,\nPlant lover!</string>
+    <string name="home_search_placeholder">Search for plant</string>
+    <string name="home_diagnose_title">Diagnose</string>
+    <string name="home_diagnose_subtitle">Set your Daisy® Sensor</string>
+    <string name="home_identity_title">Identity</string>
+    <string name="home_identity_subtitle">Tap ro recognise plants</string>
+    <string name="home_yard_title">My yard</string>
+    <string name="home_yard_subtitle">Check your yard</string>
+
     <!-- TODO: Remove or change this placeholder text -->
 
 </resources>
