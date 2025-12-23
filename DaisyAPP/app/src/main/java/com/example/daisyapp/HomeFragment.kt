@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.cardview.widget.CardView
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -33,7 +36,25 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        /*// Referência para o card de Diagnose
+        // Clique no Card Diagnose
+        view.findViewById<CardView>(R.id.card_diagnose).setOnClickListener {
+            (activity as? MainActivity)?.handleNavigation(R.id.nav_diagnose)
+        }
+
+        // Clique no Card Identity
+        view.findViewById<CardView>(R.id.card_identity).setOnClickListener {
+            (activity as? MainActivity)?.handleNavigation(R.id.nav_camera)
+        }
+
+        // Clique no Card My Yard
+        view.findViewById<CardView>(R.id.card_yard).setOnClickListener {
+            (activity as? MainActivity)?.handleNavigation(R.id.nav_yard)
+        }*/
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
