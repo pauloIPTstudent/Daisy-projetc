@@ -108,6 +108,7 @@
                 android:background="@drawable/bg_edittext_rounded"
                 android:hint="e.g., Monty"
                 android:paddingHorizontal="16dp"/>
+
             <Button
                 android:id="@+id/save_plant_btn"
                 android:layout_width="match_parent"

@@ -15,4 +15,10 @@ interface ApiService {
     fun getUserPlants(
         @Header("Authorization") token: String
     ): Call<PlantResponse>
+
+    @POST("createplant")
+    fun createPlant(
+        @Header("Authorization") token: String,
+        @Body request: CreatePlantRequest
+    ): Call<CreatePlantResponse>
 }

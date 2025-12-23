@@ -1,5 +1,7 @@
 package com.example.daisyapp
 
+import CreatePlantRequest
+import CreatePlantResponse
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -7,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +20,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.Callback
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,6 +83,8 @@ class PlantFormFragment : Fragment() {
         val cardPhoto = view.findViewById<View>(R.id.cardPhoto)
         val btnSave = view.findViewById<Button>(R.id.save_plant_btn)
         val etPlantName = view.findViewById<EditText>(R.id.etPlantName)
+        val etPlantSpeecie = view.findViewById<EditText>(R.id.etNickname)
+
 
         // 2. Clique no Card para abrir a câmera
         cardPhoto.setOnClickListener {
@@ -91,19 +99,23 @@ class PlantFormFragment : Fragment() {
         // 3. Clique no botão Salvar
         btnSave.setOnClickListener {
             val name = etPlantName.text.toString()
-
+            val speecie = etPlantSpeecie.text.toString()
             if (plantBitmap != null && name.isNotEmpty()) {
                 // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
-                salvarPlanta(name, plantBitmap!!)
+                savePlant(name, speecie,plantBitmap!!)
             } else {
                 Toast.makeText(context, "Preencha o nome e tire uma foto!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun salvarPlanta(nome: String, foto: Bitmap) {
+    private fun savePlant(name: String,speecie:String, foto: Bitmap) {
         // Lógica para salvar no Banco de Dados ou enviar para API
+        sendPlantToApi(name,speecie){
+
+        }
     }
+
     private fun openCamera() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
@@ -127,6 +139,32 @@ class PlantFormFragment : Fragment() {
             else -> {
                 requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
             }
+        }
+    }
+
+    private fun sendPlantToApi(name: String, specie: String, onResult: (Int?) -> Unit) {
+        val plantRequest = CreatePlantRequest(name, specie, "Descrição opcional")
+        val token = SessionManager.fetchAuthToken(requireContext())
+
+        if (token != null) {
+            RetrofitClient.instance.createPlant("Bearer $token", plantRequest)
+                .enqueue(object : Callback<CreatePlantResponse> {
+                    override fun onResponse(call: Call<CreatePlantResponse>, response: Response<CreatePlantResponse>) {
+                        if (response.isSuccessful) {
+                            val newId = response.body()?.id
+                            Toast.makeText(context, "A planta foi criada com sucesso", Toast.LENGTH_SHORT).show()
+                            onResult(newId) // "Retorna" o ID para quem chamou
+                        } else {
+                            onResult(null)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CreatePlantResponse>, t: Throwable) {
+                        onResult(null)
+                    }
+                })
+        } else {
+            onResult(null)
         }
     }
 
