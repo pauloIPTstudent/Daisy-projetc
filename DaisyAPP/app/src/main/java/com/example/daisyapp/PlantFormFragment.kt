@@ -4,6 +4,7 @@ import CreatePlantRequest
 import CreatePlantResponse
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
+import java.io.IOException
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -102,17 +104,28 @@ class PlantFormFragment : Fragment() {
             val speecie = etPlantSpeecie.text.toString()
             if (plantBitmap != null && name.isNotEmpty()) {
                 // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
-                savePlant(name, speecie,plantBitmap!!)
+                savePlant(name, speecie,plantBitmap!!,requireContext())
             } else {
                 Toast.makeText(context, "Preencha o nome e tire uma foto!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun savePlant(name: String,speecie:String, foto: Bitmap) {
+    private fun savePlant(name: String,speecie:String, foto: Bitmap, context: Context) {
         // Lógica para salvar no Banco de Dados ou enviar para API
-        sendPlantToApi(name,speecie){
+        sendPlantToApi(name,speecie){idRetornado ->
+            if (idRetornado != null) {
+                // 2. Se o ID existir, salva a foto usando o ID como nome
+                val sucesso = ImageStorageManager.saveImage( context,idRetornado, foto)
 
+                if (sucesso) {
+                    // Feedback de sucesso (Ex: Toast ou navegar para outra tela)
+                    Toast.makeText(context, "Planta Salva com sucesso!!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // Tratar erro: A API falhou em gerar um ID
+                Toast.makeText(context, "Erro ao salvar a planta", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
