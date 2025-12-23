@@ -32,7 +32,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_my_plants_title">
 
             <Button
-                android:id="@+id/btn_my_yard"
+                android:id="@+id/btn_reminders"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -41,12 +41,12 @@
                 android:layout_marginEnd="8dp"/>
 
             <Button
-                android:id="@+id/btn_reminders"
+                android:id="@+id/btn_add_plant"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="MY YARD" />
+                android:text="ADD Plant" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
