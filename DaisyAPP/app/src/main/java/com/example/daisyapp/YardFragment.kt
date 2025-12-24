@@ -26,7 +26,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [YardFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class YardFragment : Fragment() {
+class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -53,16 +53,36 @@ class YardFragment : Fragment() {
 
         // Inicializa o RecyclerView com uma lista vazia
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_plants)
-        plantAdapter = PlantAdapter(emptyList())
-        recyclerView.adapter = plantAdapter        // 2. Chame a função para carregar os dados da API
-        val buttonSignIn = view.findViewById<Button>(R.id.btn_add_plant)
-        buttonSignIn.setOnClickListener {
+        plantAdapter = PlantAdapter(emptyList(),this)
+        recyclerView.adapter = plantAdapter
+        // 2. Chame a função para carregar os dados da API
+        val buttonAddPlant= view.findViewById<Button>(R.id.btn_add_plant)
+        buttonAddPlant.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView3, PlantFormFragment()) // R.id.fragment_container é o ID do container na AuthActivity
                 .addToBackStack(null) // Permite que o utilizador volte ao carregar no botão "Retroceder"
                 .commit()
         }
         loadPlants()
+
+    }
+    override fun onItemClick(data: Plant) {
+        // 1. Criar o Bundle com as mesmas chaves que você definiu no PlantFormFragment
+        val bundle = Bundle().apply {
+            putInt("EXTRA_ID", data.id)
+            putString("EXTRA_NAME", data.name)
+            putString("EXTRA_SPECIE", data.specie)
+        }
+
+        // 2. Criar a instância do fragmento de destino
+        val fragmentDestino = PlantFormFragment()
+        fragmentDestino.arguments = bundle
+
+        // 3. Realizar a transação (Trocar de tela)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView3, fragmentDestino) // Certifique-se que o ID é o do container do seu layout principal
+            .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar
+            .commit()
 
     }
     private fun setupRecyclerView(plantList: List<Plant>) {

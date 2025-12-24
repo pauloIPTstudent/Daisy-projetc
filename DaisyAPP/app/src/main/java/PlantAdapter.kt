@@ -10,14 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.daisyapp.R
 import java.io.File
 
-class PlantAdapter(private var plants: List<Plant>) : RecyclerView.Adapter<PlantAdapter.PlantViewHolder>() {
+class PlantAdapter(private var plants: List<Plant>,private val listener: OnItemClickListener) : RecyclerView.Adapter<PlantAdapter.PlantViewHolder>() {
 
     class PlantViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.plant_name)
         val nickname: TextView = view.findViewById(R.id.plant_nickname)
         val image: ImageView = view.findViewById(R.id.plant_image)
-    }
 
+    }
+    interface OnItemClickListener {
+        fun onItemClick(data: Plant)
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_plant_card, parent, false)
         return PlantViewHolder(view)
@@ -39,6 +42,10 @@ class PlantAdapter(private var plants: List<Plant>) : RecyclerView.Adapter<Plant
         } else {
             // 3. Se não existir (ou for a primeira vez), carrega a imagem padrão do projeto
             holder.image.setImageResource(R.drawable.home)
+        }
+        // Detecta o clique no card inteiro
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(plant)
         }
     }
 
