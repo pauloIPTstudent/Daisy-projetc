@@ -77,7 +77,7 @@ class PlantFormFragment : Fragment() {
             // Se o usuário aceitou agora, abre a câmera
             openCamera()
         } else {
-            Toast.makeText(requireContext(), "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -125,7 +125,7 @@ class PlantFormFragment : Fragment() {
                     // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
                     savePlant(name, specie,plantBitmap!!,requireContext())
                 } else {
-                    Toast.makeText(context, "Preencha o nome e tire uma foto!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.plant_form_fillerror, Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -141,12 +141,12 @@ class PlantFormFragment : Fragment() {
 
                 if (sucesso) {
                     // Feedback de sucesso (Ex: Toast ou navegar para outra tela)
-                    Toast.makeText(context, "Planta Salva com sucesso!!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.plant_form_add_sucess, Toast.LENGTH_SHORT).show()
                     parentFragmentManager.popBackStack()
                 }
             } else {
                 // Tratar erro: A API falhou em gerar um ID
-                Toast.makeText(context, "Erro ao salvar a planta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.plant_form_add_error, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -157,12 +157,12 @@ class PlantFormFragment : Fragment() {
                 plantBitmap?.let { novoBitmap ->
                     ImageStorageManager.saveImage(requireContext(), id, novoBitmap)
                 }
-                Toast.makeText(context, "Planta editada com sucesso!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
 
                 // Retorna para o YardFragment (a lista)
                 parentFragmentManager.popBackStack()
             } else {
-                Toast.makeText(context, "Erro ao atualizar no servidor", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.api_form_plant_servererror, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -172,7 +172,7 @@ class PlantFormFragment : Fragment() {
         try {
             takePictureLauncher.launch(takePictureIntent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "Câmera não encontrada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -203,7 +203,7 @@ class PlantFormFragment : Fragment() {
                     override fun onResponse(call: Call<CreatePlantResponse>, response: Response<CreatePlantResponse>) {
                         if (response.isSuccessful) {
                             val newId = response.body()?.id
-                            Toast.makeText(context, "A planta foi criada com sucesso", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
                             onResult(newId) // "Retorna" o ID para quem chamou
                         } else {
                             onResult(null)
@@ -232,7 +232,7 @@ class PlantFormFragment : Fragment() {
                         if (response.isSuccessful) {
                             val sucess = response.body()?.success
                             Log.d("DEBUG_EDIT", "Sucesso no Servidor! Resposta: $sucess")
-                            Toast.makeText(context, "A planta foi criada com sucesso", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
                             onResult(sucess) // "Retorna" o ID para quem chamou
                         } else {
                             val erroCorpo = response.errorBody()?.string()
@@ -240,7 +240,7 @@ class PlantFormFragment : Fragment() {
                             Log.e("DEBUG_EDIT", "Erro no Servidor - Código: $codigoErro")
                             Log.e("DEBUG_EDIT", "Corpo do Erro: $erroCorpo")
 
-                            Toast.makeText(context, "Erro no servidor ($codigoErro)", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "${R.string.api_form_plant_servererror} ($codigoErro)", Toast.LENGTH_SHORT).show()
                             onResult(null)                        }
                     }
 

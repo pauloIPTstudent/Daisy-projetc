@@ -108,7 +108,7 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
                         Log.d("API_GET", "Plantas encontradas: ${plants}")
                     } else if (response.code() == 401) {
                         // Token expirado ou inválido
-                        Toast.makeText(context, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.api_expired_session, Toast.LENGTH_SHORT).show()
                     }
                 }
 
