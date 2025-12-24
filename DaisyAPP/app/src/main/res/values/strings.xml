@@ -18,6 +18,8 @@
     <string name="api_login_error400">Invalid credentials, please try again.</string>
     <string name="api_login_conectivity_error">Invalid credentials, please try again.</string>
     <string name="api_register_success">Account created successfully!</string>
+    <string name="api_expired_session">Session expired! Loogin to your account</string>
+    <string name="api_form_plant_servererror">Erro ao atualizar no servidor</string>
 
     <!-- Home -->
     <string name="home_welcome">Welcome,\nPlant lover!</string>
@@ -28,8 +30,17 @@
     <string name="home_identity_subtitle">Tap ro recognise plants</string>
     <string name="home_yard_title">My yard</string>
     <string name="home_yard_subtitle">Check your yard</string>
+
+    <!-- PlantForm -->
+    <string name="plant_form_fillerror">Preencha o nome e tire uma foto!</string>
+    <string name="plant_form_add_sucess">Planta Salva com sucesso!!</string>
+    <string name="plant_form_edit_sucess">Planta Editada com sucesso!!</string>
+    <string name="plant_form_add_error">Erro ao Salvar planta</string>
+
+    <!-- Camera -->
+    <string name="camera_permission_error">Permissão de câmera negada</string>
+
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

@@ -1,7 +1,9 @@
 package com.example.daisyapp
 
-import CreatePlantRequest
+import PlantRequest
 import CreatePlantResponse
+import EditPlantRequest
+import EditPlantResponse
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -24,7 +26,6 @@ import androidx.core.content.ContextCompat
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
-import java.io.IOException
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,8 +39,9 @@ private const val ARG_PARAM2 = "param2"
  */
 class PlantFormFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var plantId: Int = -1
+    private var plantName: String? = null
+    private var plantSpecie: String? = null
     private var plantBitmap: Bitmap? = null
     private lateinit var ivPreview: ImageView // O ImageView dentro do seu CardView
 
@@ -54,8 +56,9 @@ class PlantFormFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            plantId = it.getInt("EXTRA_ID")
+            plantName = it.getString("EXTRA_NAME")
+            plantSpecie = it.getString("EXTRA_SPECIE")
         }
     }
 
@@ -74,7 +77,7 @@ class PlantFormFragment : Fragment() {
             // Se o usuário aceitou agora, abre a câmera
             openCamera()
         } else {
-            Toast.makeText(requireContext(), "Permissão de câmera negada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,8 +88,18 @@ class PlantFormFragment : Fragment() {
         val cardPhoto = view.findViewById<View>(R.id.cardPhoto)
         val btnSave = view.findViewById<Button>(R.id.save_plant_btn)
         val etPlantName = view.findViewById<EditText>(R.id.etPlantName)
-        val etPlantSpeecie = view.findViewById<EditText>(R.id.etNickname)
+        val etPlantSpecie = view.findViewById<EditText>(R.id.etNickname)
 
+        etPlantName.setText(plantName)
+        etPlantSpecie.setText(plantSpecie)
+        if(plantId!=-1){
+            val bitmap = ImageStorageManager.getImage(requireContext(), plantId)
+
+            if (bitmap != null) {
+                // 2. Se a foto existir, carrega o Bitmap
+                ivPreview.setImageBitmap(bitmap)
+            }
+        }
 
         // 2. Clique no Card para abrir a câmera
         cardPhoto.setOnClickListener {
@@ -101,30 +114,55 @@ class PlantFormFragment : Fragment() {
         // 3. Clique no botão Salvar
         btnSave.setOnClickListener {
             val name = etPlantName.text.toString()
-            val speecie = etPlantSpeecie.text.toString()
-            if (plantBitmap != null && name.isNotEmpty()) {
-                // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
-                savePlant(name, speecie,plantBitmap!!,requireContext())
-            } else {
-                Toast.makeText(context, "Preencha o nome e tire uma foto!", Toast.LENGTH_SHORT).show()
+            val specie = etPlantSpecie.text.toString()
+            if(plantId!=-1){
+                //editPlant
+                editPlant(plantId,name,specie)
+
             }
+            else{
+                if (plantBitmap != null && name.isNotEmpty()) {
+                    // AQUI VOCÊ TEM ACESSO À FOTO (plantBitmap) E AO NOME
+                    savePlant(name, specie,plantBitmap!!,requireContext())
+                } else {
+                    Toast.makeText(context, R.string.plant_form_fillerror, Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
     }
 
     private fun savePlant(name: String,speecie:String, foto: Bitmap, context: Context) {
         // Lógica para salvar no Banco de Dados ou enviar para API
-        sendPlantToApi(name,speecie){idRetornado ->
+        sendAddPlantResquest(name,speecie){ idRetornado ->
             if (idRetornado != null) {
                 // 2. Se o ID existir, salva a foto usando o ID como nome
                 val sucesso = ImageStorageManager.saveImage( context,idRetornado, foto)
 
                 if (sucesso) {
                     // Feedback de sucesso (Ex: Toast ou navegar para outra tela)
-                    Toast.makeText(context, "Planta Salva com sucesso!!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.plant_form_add_sucess, Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.popBackStack()
                 }
             } else {
                 // Tratar erro: A API falhou em gerar um ID
-                Toast.makeText(context, "Erro ao salvar a planta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.plant_form_add_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    private fun editPlant(id: Int, name: String, specie: String) {
+        sendEditResquest(id, name, specie) { sucesso ->
+            if (sucesso == true) {
+                // Se o texto foi editado com sucesso, verificamos se há uma nova foto para salvar
+                plantBitmap?.let { novoBitmap ->
+                    ImageStorageManager.saveImage(requireContext(), id, novoBitmap)
+                }
+                Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
+
+                // Retorna para o YardFragment (a lista)
+                parentFragmentManager.popBackStack()
+            } else {
+                Toast.makeText(context, R.string.api_form_plant_servererror, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -134,7 +172,7 @@ class PlantFormFragment : Fragment() {
         try {
             takePictureLauncher.launch(takePictureIntent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "Câmera não encontrada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -155,8 +193,8 @@ class PlantFormFragment : Fragment() {
         }
     }
 
-    private fun sendPlantToApi(name: String, specie: String, onResult: (Int?) -> Unit) {
-        val plantRequest = CreatePlantRequest(name, specie, "Descrição opcional")
+    private fun sendAddPlantResquest(name: String, specie: String, onResult: (Int?) -> Unit) {
+        val plantRequest = PlantRequest(name, specie, "Descrição opcional")
         val token = SessionManager.fetchAuthToken(requireContext())
 
         if (token != null) {
@@ -165,7 +203,7 @@ class PlantFormFragment : Fragment() {
                     override fun onResponse(call: Call<CreatePlantResponse>, response: Response<CreatePlantResponse>) {
                         if (response.isSuccessful) {
                             val newId = response.body()?.id
-                            Toast.makeText(context, "A planta foi criada com sucesso", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
                             onResult(newId) // "Retorna" o ID para quem chamou
                         } else {
                             onResult(null)
@@ -173,6 +211,40 @@ class PlantFormFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<CreatePlantResponse>, t: Throwable) {
+                        onResult(null)
+                    }
+                })
+        } else {
+            onResult(null)
+        }
+    }
+
+    private fun sendEditResquest(id: Int,name: String, specie: String, onResult: (Boolean?) -> Unit) {
+        Log.d("DEBUG_EDIT", "Iniciando Edição - ID: $id, Nome: $name, Especie: $specie")
+        val editplantRequest = EditPlantRequest(id,name, specie, "Descrição opcional")
+        val token = SessionManager.fetchAuthToken(requireContext())
+
+        if (token != null) {
+            Log.d("DEBUG_EDIT", "Token encontrado: ${token.take(10)}...") // Loga apenas o início do token por segurança
+            RetrofitClient.instance.editPlant("Bearer $token", editplantRequest)
+                .enqueue(object : Callback<EditPlantResponse> {
+                    override fun onResponse(call: Call<EditPlantResponse>, response: Response<EditPlantResponse>) {
+                        if (response.isSuccessful) {
+                            val sucess = response.body()?.success
+                            Log.d("DEBUG_EDIT", "Sucesso no Servidor! Resposta: $sucess")
+                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
+                            onResult(sucess) // "Retorna" o ID para quem chamou
+                        } else {
+                            val erroCorpo = response.errorBody()?.string()
+                            val codigoErro = response.code()
+                            Log.e("DEBUG_EDIT", "Erro no Servidor - Código: $codigoErro")
+                            Log.e("DEBUG_EDIT", "Corpo do Erro: $erroCorpo")
+
+                            Toast.makeText(context, "${R.string.api_form_plant_servererror} ($codigoErro)", Toast.LENGTH_SHORT).show()
+                            onResult(null)                        }
+                    }
+
+                    override fun onFailure(call: Call<EditPlantResponse>, t: Throwable) {
                         onResult(null)
                     }
                 })

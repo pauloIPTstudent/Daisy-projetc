@@ -19,7 +19,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Plant"
+                android:text=""
                 android:textColor="#1D232E"
                 android:textSize="18sp"
                 android:textStyle="bold"/>

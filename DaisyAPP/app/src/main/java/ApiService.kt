@@ -3,6 +3,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface ApiService {
     @POST("login")
@@ -19,6 +20,12 @@ interface ApiService {
     @POST("createplant")
     fun createPlant(
         @Header("Authorization") token: String,
-        @Body request: CreatePlantRequest
+        @Body request: PlantRequest
     ): Call<CreatePlantResponse>
+
+    @PUT("editplant")
+    fun editPlant(
+        @Header("Authorization") token: String,
+        @Body request: EditPlantRequest
+    ): Call<EditPlantResponse>
 }
