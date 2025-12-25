@@ -3,7 +3,7 @@ POST https://dam-api-ribg.onrender.com/create_account
 Content-Type: application/json
 
 {
-  "email": "user6@email.com",
+  "email": "aluno24880@ipt.pt",
   "password": "123qwe#"
 }
 ### POST para sing in
@@ -11,30 +11,30 @@ POST https://dam-api-ribg.onrender.com/login
 Content-Type: application/json
 
 {
-  "email": "user5@email.com",
+  "email": "aluno24880@ipt.pt",
   "password": "123qwe#"
 }
 ### GET com Token no Header
 GET https://dam-api-ribg.onrender.com/listuserplants  
-Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Authorization: Bearer GAbvQUSwMVyZcqI9WWxWW4CXI9pKpUbi1cYcgDks1zM
 ### POST com JSON e Token no Header
 POST https://dam-api-ribg.onrender.com/createplant
-Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Authorization: Bearer 1pCekrLrZN9I34B8vY7G3rBGTxONbgaRHKo6EUbdqJ8
 Content-Type: application/json
 
 {
   "name": "Rose",
-  "species": "Rosa damascena",
+  "specie": "Rosa damascena",
   "description": "A beautiful red rose"
 }
 
 ### POST com JSON e Token no Header
 PUT https://dam-api-ribg.onrender.com/editplant
-Authorization: Bearer XOwCOfubPXXAuIDmi-wDrR0wRsRcTtd1vXuv9DZooQE
+Authorization: Bearer 1pCekrLrZN9I34B8vY7G3rBGTxONbgaRHKo6EUbdqJ8
 Content-Type: application/json
 
 {
-  "id": 2,
+  "id": 3,
   "name": "Tulip",
   "species": "Tulipa gesneriana",
   "description": "A vibrant yellow tulip"
