@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timezone
 
 from tables import app, db, User, Plant, Reading
+import requests
 
 
 def get_token_from_request(req):
@@ -201,6 +202,86 @@ def sensor_reading():
     Reading.create_reading(plant_id, humidity, light)
     return jsonify({'success': True}), 201
 
+@app.route('/weather', methods=['POST'])
+def weather():
+    # 1. Captura os dados enviados pelo sensor/cliente
+    dados_entrada = request.get_json()
+    
+    if not dados_entrada or 'lat' not in dados_entrada or 'lon' not in dados_entrada:
+        return jsonify({"erro": "Latitude (lat) e Longitude (lon) são necessárias"}), 400
+
+    lat = dados_entrada['lat']
+    lon = dados_entrada['lon']
+
+    # 2. Monta a URL (units=metric garante Celsius)
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=16a1970b07b3a55ee0f1d963672282be&units=metric"
+    try:
+        # 3. Faz a ponte com a API externa
+        resposta = requests.get(url)
+        dados_clima = resposta.json()
+
+        if resposta.status_code == 200:
+            # 4. Filtra e entrega apenas o necessário para o protótipo
+            saida = {
+                "cidade": dados_clima.get('name'),
+                "celsius": dados_clima['main'].get('temp'),
+                "tempo_principal": dados_clima['weather'][0].get('main') # Ex: Rain, Clouds, Clear
+            }
+            return jsonify(saida), 200
+        else:
+            return jsonify({"erro": "Falha na OpenWeather", "detalhes": dados_clima}), resposta.status_code
+
+    except Exception as e:
+        return jsonify({"erro": "Erro de conexão", "mensagem": str(e)}), 500
+
+
+# Configurações da API PlantNet
+API_KEY = "2b10mofs9afa03ALzUWKNuytoO"
+PROJECT = "all"
+API_ENDPOINT = f"https://my-api.plantnet.org/v2/identify/{PROJECT}?api-key={API_KEY}"
+
+@app.route('/identify', methods=['POST'])
+def identify():
+    # 1. Verificar se a imagem foi enviada
+    if 'image' not in request.files:
+        return jsonify({"error": "Nenhuma imagem enviada"}), 400
+    
+    file = request.files['image']
+    organ = request.form.get('organ', 'leaf') # Padrão é 'leaf' se não enviado
+
+    # 2. Preparar os dados para a PlantNet
+    # O PlantNet espera um multipart/form-data
+    files = [
+        ('images', (file.filename, file.stream, file.content_type))
+    ]
+    data = {'organs': [organ]}
+
+    try:
+        # 3. Fazer a requisição para a API externa
+        response = requests.post(API_ENDPOINT, files=files, data=data)
+        response.raise_for_status()
+        
+        json_result = response.json()
+
+        # 4. Extrair o nome comum e a espécie do primeiro resultado (maior score)
+        if json_result.get('results'):
+            best_match = json_result['results'][0]
+            
+            scientific_name = best_match['species']['scientificNameWithoutAuthor']
+            # Pega o primeiro nome comum se existir, senão retorna None
+            common_names = best_match['species'].get('commonNames', [])
+            common_name = common_names[0] if common_names else "N/A"
+
+            return jsonify({
+                "species": scientific_name,
+                "common_name": common_name,
+                "score": best_match['score']
+            })
+        else:
+            return jsonify({"error": "Nenhuma planta identificada"}), 404
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Erro na API PlantNet: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
