@@ -55,13 +55,13 @@ class HomeFragment : Fragment() {
             // 4. (Opcional) Finaliza a instância atual da atividade
             activity?.finish()
         }
-        /*// Referência para o card de Diagnose
+        /**/// Referência para o card de Diagnose
         // Clique no Card Diagnose
         view.findViewById<CardView>(R.id.card_diagnose).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_diagnose)
-        }
+        }//
 
-        // Clique no Card Identity
+        /* // Clique no Card Identity
         view.findViewById<CardView>(R.id.card_identity).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_camera)
         }// */
