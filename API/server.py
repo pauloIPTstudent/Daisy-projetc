@@ -247,14 +247,14 @@ def identify():
         return jsonify({"error": "Nenhuma imagem enviada"}), 400
     
     file = request.files['image']
-    organ = request.form.get('organ', 'leaf') # Padrão é 'leaf' se não enviado
+    #organ = request.form.get('organ', 'leaf') # Padrão é 'leaf' se não enviado
 
     # 2. Preparar os dados para a PlantNet
     # O PlantNet espera um multipart/form-data
     files = [
         ('images', (file.filename, file.stream, file.content_type))
     ]
-    data = {'organs': [organ]}
+    data = {'organs': 'leaf'}
 
     try:
         # 3. Fazer a requisição para a API externa
