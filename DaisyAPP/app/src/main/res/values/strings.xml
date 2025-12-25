@@ -39,6 +39,7 @@
 
     <!-- Camera -->
     <string name="camera_permission_error">Permissão de câmera negada</string>
+    <string name="add_plant">ADD Plant</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 
