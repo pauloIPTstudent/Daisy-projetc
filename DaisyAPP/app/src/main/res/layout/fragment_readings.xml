@@ -67,7 +67,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Temperature"
+                            android:text="@string/temperature"
                             android:textStyle="bold"
                             android:textSize="18sp"
                             android:drawableStart="@drawable/temperature"
@@ -78,7 +78,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Temperature is essencial for the plant growth."
+                        android:text="@string/temperature_is_essencial_for_the_plant_growth"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"/>
 
@@ -138,7 +138,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Soil"
+                            android:text="@string/soil"
                             android:textStyle="bold"
                             android:textSize="18sp"
                             android:drawableStart="@drawable/plant"
@@ -149,7 +149,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="The Basics of soil preparatio is essensial to gardening."
+                        android:text="@string/the_basics_of_soil_preparatio_is_essensial_to_gardening"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"/>
 
@@ -212,7 +212,7 @@
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/plant"
                             android:drawablePadding="8dp"
-                            android:text="Sunlight"
+                            android:text="@string/sunlight"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -221,7 +221,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Providing plants with the adequate amount of sunlight is the key."
+                        android:text="@string/providing_plants_with_the_adequate_amount_of_sunlight_is_the_key"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"/>
 
