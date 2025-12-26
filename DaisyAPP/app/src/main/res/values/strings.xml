@@ -47,6 +47,8 @@
     <string name="show_off_your_plant_s_beauty">Show off your plant\'s beauty</string>
     <string name="plant_name">PLANT NAME</string>
     <string name="nickname_optional">NICKNAME (Optional)</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

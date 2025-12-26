@@ -277,6 +277,6 @@
         android:elevation="12dp"
         android:translationZ="10dp"
         android:visibility="gone"
-        
+
         app:layout_constrainedHeight="true" />
 </FrameLayout>
