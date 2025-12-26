@@ -7,6 +7,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("login")
@@ -22,7 +23,8 @@ interface ApiService {
 
     @GET("searchplants")
     fun searchUserPlants(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Query("q") query: String  // <-- Adicione isto para receber o texto da busca
     ): Call<PlantResponse>
 
     @POST("createplant")
