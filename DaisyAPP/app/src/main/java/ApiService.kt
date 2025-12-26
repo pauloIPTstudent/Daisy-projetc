@@ -1,9 +1,12 @@
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 
 interface ApiService {
     @POST("login")
@@ -28,4 +31,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: EditPlantRequest
     ): Call<EditPlantResponse>
+
+
+    @Multipart
+    @POST("identify")
+    fun identifyPlant(
+        @Part image: MultipartBody.Part
+    ): Call<IdentifyPlantResponse>
 }
