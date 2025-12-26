@@ -61,10 +61,10 @@ class HomeFragment : Fragment() {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_diagnose)
         }//
 
-        /* // Clique no Card Identity
+        // Clique no Card Identity
         view.findViewById<CardView>(R.id.card_identity).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_camera)
-        }// */
+        }//
 
         // Clique no Card My Yard
         view.findViewById<CardView>(R.id.card_yard).setOnClickListener {

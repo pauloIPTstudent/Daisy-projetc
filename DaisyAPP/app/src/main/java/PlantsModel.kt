@@ -30,3 +30,10 @@ data class EditPlantRequest(
 data class EditPlantResponse(
     val success: Boolean
 )
+
+
+data class IdentifyPlantResponse(
+    val common_name: String,
+    val species: String,
+    val score: Float
+)

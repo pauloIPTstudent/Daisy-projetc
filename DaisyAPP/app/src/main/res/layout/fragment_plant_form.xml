@@ -15,14 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#1D232E"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardPhoto"
