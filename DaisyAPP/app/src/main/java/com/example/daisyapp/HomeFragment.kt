@@ -1,5 +1,8 @@
 package com.example.daisyapp
 
+import Plant
+import PlantResponse
+import PlantSearchAdapter
 import WeatherRequest
 import WeatherResponse
 import android.annotation.SuppressLint
@@ -7,17 +10,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import retrofit2.Call
@@ -42,6 +50,8 @@ class HomeFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private lateinit var plantAdapter: PlantSearchAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +98,53 @@ class HomeFragment : Fragment() {
         view.findViewById<CardView>(R.id.card_yard).setOnClickListener {
             (activity as? MainActivity)?.handleNavigation(R.id.nav_yard)
         }// */
+
+
+
+
+
+        val searchBar = view.findViewById<EditText>(R.id.search_bar)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_search_results)
+        plantAdapter = PlantSearchAdapter { selectedPlant ->
+            // O que acontece quando clica na planta da lista:
+            searchBar.setText(selectedPlant.name) // Preenche a barra com o nome
+            recyclerView.visibility = View.GONE  // Esconde a lista flutuante
+
+            // Chame sua função de detalhes ou navegação aqui
+            goToPlant(selectedPlant)
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = plantAdapter
+
+
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                Log.d("SearchDeubug", "pesquisando")
+
+                val query = s.toString().trim()
+                Log.d("SearchDeubug", "query${query}")
+
+                if (query.length >= 3) {
+                    performSearch(query)
+                    recyclerView.visibility = View.VISIBLE
+                } else {
+                    recyclerView.visibility = View.GONE
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+
+
+
+
+
+
+
+
+
 
         // 1. Inicialize IMEDIATAMENTE ao criar a view
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -162,6 +219,47 @@ class HomeFragment : Fragment() {
                 Log.e("WeatherError", "Falha na rede: ${t.message}")
             }
         })
+    }
+
+    private fun performSearch(query: String) {
+        val token = SessionManager.fetchAuthToken(requireContext())
+        if (token != null) {
+            RetrofitClient.instance.searchUserPlants("Bearer $token", query).enqueue(object : Callback<PlantResponse> {
+                override fun onResponse(call: Call<PlantResponse>, response: Response<PlantResponse>) {
+                    if (response.isSuccessful) {
+                        val plants = response.body()?.plants ?: emptyList()
+
+                        // Pegar apenas as primeiras 5 plantas conforme solicitado
+                        val topFive = plants.take(5)
+                        Log.d("SearchDebug", topFive.toString())
+                        // Atualiza a lista no Adapter
+                        plantAdapter.setData(topFive)
+                    }
+                }
+
+                override fun onFailure(call: Call<PlantResponse>, t: Throwable) {
+                    Log.e("Search", "Erro na busca: ${t.message}")
+                }
+            })
+        }
+    }
+
+    private fun goToPlant(plant: Plant) {
+        val bundle = Bundle().apply {
+            putInt("EXTRA_ID", plant.id)
+            putString("EXTRA_NAME", plant.name)
+            putString("EXTRA_SPECIE", plant.specie)
+        }
+
+        // 2. Criar a instância do fragmento de destino
+        val fragmentDestino = PlantFormFragment()
+        fragmentDestino.arguments = bundle
+
+        // 3. Realizar a transação (Trocar de tela)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView3, fragmentDestino) // Certifique-se que o ID é o do container do seu layout principal
+            .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar
+            .commit()
     }
     companion object {
         /**

@@ -52,6 +52,7 @@
                 android:drawableStart="@android:drawable/ic_menu_search"
                 android:drawablePadding="10dp" />
 
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_weather"
                 android:layout_width="match_parent"
@@ -265,6 +266,17 @@
 
         </LinearLayout>
 
-
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@color/white"
+        android:elevation="12dp"
+        android:translationZ="10dp"
+        android:visibility="gone"
+        
+        app:layout_constrainedHeight="true" />
 </FrameLayout>

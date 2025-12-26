@@ -51,9 +51,5 @@ data class WeatherResponse(
 )
 
 
-data class SearchPlantRequest(
-    val q: String
-)
-
 
 
