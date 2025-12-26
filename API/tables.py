@@ -93,6 +93,16 @@ class Plant(db.Model):
             return True
         return False
 
+    @staticmethod
+    def search_plants_by_user(user_id, search_query, limit=5):
+        # Cria o padrão de busca (ex: "samambaia" vira "%samambaia%")
+        search_pattern = f"%{search_query}%"
+        
+        return Plant.query.filter(
+            Plant.user_id == user_id,
+            (Plant.name.ilike(search_pattern)) | (Plant.specie.ilike(search_pattern))
+        ).limit(limit).all()
+
 # Leituras de sensores (humidade do solo e intensidade de luz) associadas a uma planta
 class Reading(db.Model):
     id = db.Column(db.Integer, primary_key=True)

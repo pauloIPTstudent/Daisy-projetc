@@ -99,6 +99,30 @@ def create_plant():
     return jsonify({'success': True, 'id': plant.id}), 201
 
 
+@app.route('/searchplants', methods=['GET'])
+def search_plants():
+    token = get_token_from_request(request) or request.args.get('token')
+    search_query = request.args.get('q', '')
+
+    user = User.get_user_by_token(token)
+    if not user:
+        return jsonify({'error': 'invalid token'}), 401
+
+    # Chama o método que criamos na classe Plant
+    plants = Plant.search_plants_by_user(user.id, search_query)
+    
+    result = [{'id': p.id, 'name': p.name, 'specie': p.specie} for p in plants]
+    return jsonify({'plants': result}), 200
+
+
+@app.route('/verify', methods=['GET'])
+def verify():
+    token = get_token_from_request(request) or request.args.get('token')
+    if User.get_user_by_token(token):
+        return jsonify({'success': True}), 200
+    return jsonify({'error': 'invalid token'}), 401
+    
+    
 @app.route('/readings', methods=['GET'])
 def get_readings():
     # params: plant_id (required), start_time (ISO), end_time (ISO)
