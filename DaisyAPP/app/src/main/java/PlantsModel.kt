@@ -37,3 +37,23 @@ data class IdentifyPlantResponse(
     val species: String,
     val score: Float
 )
+
+
+data class WeatherRequest(
+    val lat: Double,
+    val lon: Double
+)
+
+data class WeatherResponse(
+    val celsius: Float,
+    val cidade: String,
+    val tempo_principal: String
+)
+
+
+data class SearchPlantRequest(
+    val q: String
+)
+
+
+

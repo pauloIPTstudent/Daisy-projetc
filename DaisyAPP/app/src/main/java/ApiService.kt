@@ -20,6 +20,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<PlantResponse>
 
+    @GET("searchplants")
+    fun searchUserPlants(
+        @Header("Authorization") token: String
+    ): Call<PlantResponse>
+
     @POST("createplant")
     fun createPlant(
         @Header("Authorization") token: String,
@@ -38,4 +43,8 @@ interface ApiService {
     fun identifyPlant(
         @Part image: MultipartBody.Part
     ): Call<IdentifyPlantResponse>
+
+
+    @POST("weather")
+    fun getWeather(@Body request: WeatherRequest): Call<WeatherResponse>
 }
