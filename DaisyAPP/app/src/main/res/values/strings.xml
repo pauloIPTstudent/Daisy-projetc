@@ -67,6 +67,14 @@
     <string name="erro_na_identifica_o">Identification error</string>
     <string name="erro_no_servidor_c_digo">"Server error: Code "</string>
     <string name="none_picture_were_taken_to_share">none picture were taken to share</string>
+    <string name="reading_summary">Right now, the %1$s is %2$d%3$s, which means it is %4$s.</string>
+    <string name="level_low">Low</string>
+    <string name="level_ideal">Ideal</string>
+    <string name="level_high">High</string>
+    <string name="label_temperature">Temperature</string>
+    <string name="label_soil_ph">Soil pH</string>
+    <string name="label_sunlight">Sunlight</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
 

@@ -54,4 +54,13 @@
     <string name="falha_na_conex_o">Falha na conexão:</string>
     <string name="erro_na_identifica_o">Erro na identificação</string>
     <string name="erro_no_servidor_c_digo">Erro no servidor: Código</string>
+    <string name="none_picture_were_taken_to_share">Erro ao partilhar</string>
+    <string name="reading_summary">No momento, o nível de %1$s é %2$d%3$s, o que significa que está %4$s.</string>
+    <string name="level_low">Baixo</string>
+    <string name="level_ideal">Ideal</string>
+    <string name="level_high">Alto</string>
+    <string name="label_temperature">Temperatura</string>
+    <string name="label_soil_ph">pH do Solo</string>
+    <string name="label_sunlight">Luz Solar</string>
+
 </resources>
