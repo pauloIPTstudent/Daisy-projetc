@@ -1,12 +1,32 @@
 package com.example.daisyapp
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,9 +39,29 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class DiagnoseFragment : Fragment() {
+
+    private val TAG = "BLE_SCAN_LOG"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    // UUIDs do seu código ESP32
+    private val SERVICE_UUID = UUID.fromString("4fafc201-1fb5-459e-8fcc-c5c9c331914b")
+    private val CHAR_READ_SENSOR = UUID.fromString("beb5483e-36e1-4688-b7f5-ea07361b26a8")
+    private val CHAR_NAME_CONTROL = UUID.fromString("82c8bb2a-4309-11ec-81d3-0242ac130003")
+
+    private var bluetoothGatt: BluetoothGatt? = null
+
+    // Objetos de sistema
+    private val bluetoothAdapter: BluetoothAdapter? by lazy {
+        val manager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        manager.adapter
+    }
+
+    private val bleScanner by lazy { bluetoothAdapter?.bluetoothLeScanner }
+
+    // Callback para gerenciar os resultados do Scan
+    private var deviceListUpdateListener: ((BluetoothDevice) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +82,179 @@ class DiagnoseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Associa ação ao botão btnSingIn
-        val buttonSignIn = view.findViewById<FrameLayout>(R.id.btn_add_sensor)
-        buttonSignIn.setOnClickListener {
+        val btnAddSensor = view.findViewById<FrameLayout>(R.id.btn_add_sensor)
+        btnAddSensor.setOnClickListener {
+
             val dialog = SensorSetupDialog()
+
+            // Configuramos o listener ANTES de começar o scan
+            deviceListUpdateListener = { device ->
+                // Esta função deve ser criada dentro do seu SensorSetupDialog.kt
+                dialog.addDeviceToList(device) {
+                    // O que acontece ao clicar no dispositivo da lista:
+                    stopBleScan()
+                    connectToDevice(device)
+                    dialog.dismiss()
+                }
+            }
+
             dialog.show(parentFragmentManager, "SensorDialog")
+
+            val btnLerSensor = view.findViewById<Button>(R.id.btn_sensor_read)
+            btnLerSensor.setOnClickListener {
+                solicitarLeituraDoSensor()
+            }
+
+            // Agora verificamos permissões e iniciamos o scan
+            checkBluetoothPermissionAndStart()
+
+
         }
+    }
+    private fun connectToDevice(device: BluetoothDevice) {
+        Log.d("BLE_LOG", "Iniciando conexão com: ${device.name}")
+        // false indica que queremos conectar diretamente agora, sem esperar
+        bluetoothGatt = device.connectGatt(requireContext(), false, gattCallback)
+    }
+    private fun checkBluetoothPermissionAndStart() {
+        // Definimos as permissões necessárias baseadas na versão do Android
+        val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
+
+        // Verifica se TODAS as permissões do array já estão concedidas
+        val allPermissionsGranted = bluetoothPermissions.all {
+            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        when {
+            allPermissionsGranted -> {
+                startBleScan()
+            }
+            else -> {
+                // Lança o pedido para o array de permissões definido acima
+                requestBluetoothPermissionLauncher.launch(bluetoothPermissions)
+            }
+        }
+    }
+
+    private val requestBluetoothPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        // Verifica se todas foram aceitas
+        val allGranted = permissions.entries.all { it.value }
+        if (allGranted) {
+            startBleScan() // Sua função para começar a busca
+        } else {
+            // Exiba uma mensagem: "Permissão negada. Não podemos buscar o sensor."
+        }
+    }
+    private val scanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            val device = result.device
+            val deviceName = device.name ?: "Desconhecido"
+            val deviceAddress = device.address
+            // Aqui enviamos o dispositivo encontrado para o Dialog através do Listener
+            deviceListUpdateListener?.invoke(device)
+            Log.d(TAG, "Dispositivo Encontrado: Nome: $deviceName | MAC: $deviceAddress")
+        }
+        override fun onScanFailed(errorCode: Int) {
+            // LOG: Caso ocorra algum erro no scan
+            Log.e(TAG, "Erro no Scan: Código $errorCode")
+        }
+    }
+
+    private fun startBleScan() {
+        // Verifique se tem permissões antes!
+        Log.d(TAG, "Iniciando o Scan Bluetooth...")
+        bleScanner?.startScan(scanCallback)
+    }
+
+    private fun stopBleScan() {
+        Log.d(TAG, "Parando o Scan Bluetooth.")
+        bleScanner?.stopScan(scanCallback)
+    }
+    fun solicitarLeituraDoSensor() {
+        if (bluetoothGatt == null) {
+            Log.e("BLE_LOG", "GATT não conectado!")
+            return
+        }
+
+        val service = bluetoothGatt?.getService(SERVICE_UUID)
+        val characteristic = service?.getCharacteristic(CHAR_READ_SENSOR)
+
+        if (characteristic != null) {
+            // Envia o pedido de leitura para o ESP32
+            bluetoothGatt?.readCharacteristic(characteristic)
+            Log.d("BLE_LOG", "Pedido de leitura enviado ao ESP32...")
+        } else {
+            Log.e("BLE_LOG", "Característica de leitura não encontrada!")
+        }
+    }
+    private val gattCallback = object : BluetoothGattCallback() {
+
+        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                // A conexão aconteceu em Background...
+                gatt.discoverServices()
+
+                // ...então "pedimos licença" para a Main Thread para mexer na UI
+                activity?.runOnUiThread {
+                    updateUIConnected(gatt.device.name ?: "Sensor Daisy")
+                }
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                activity?.runOnUiThread {
+                    updateUIDisconnected()
+                }
+            }
+        }
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d("BLE_LOG", "Serviços prontos. Aguardando comando do botão.")
+            }
+        }
+
+        // ESTE É O MÉTODO QUE RECEBE A RESPOSTA DO SEU BOTÃO
+        override fun onCharacteristicRead(gatt: BluetoothGatt, char: BluetoothGattCharacteristic, status: Int) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                val valor = char.getStringValue(0)
+
+                activity?.runOnUiThread {
+                    // Atualize qualquer TextView aqui dentro!
+                    // Exemplo: tv_subtitle.text = "Leitura: $valor"
+                    Log.d("BLE_LOG", "Interface atualizada com valor: $valor")
+                }
+            }
+        }
+    }
+    // Função para esconder o "Add Sensor" e mostrar o "Read"
+    private fun updateUIConnected(sensorName: String) {
+        val btnAddSensor = view?.findViewById<FrameLayout>(R.id.btn_add_sensor)
+        val btnRead = view?.findViewById<Button>(R.id.btn_sensor_read)
+        val tvSubtitle = view?.findViewById<TextView>(R.id.tv_subtitle)
+
+        // 1. Esconde o botão de adicionar
+        btnAddSensor?.visibility = View.GONE
+
+        // 2. Mostra o botão de leitura
+        btnRead?.visibility = View.VISIBLE
+
+        // 3. Atualiza o texto com o nome do sensor
+        tvSubtitle?.text = "Connected to: $sensorName"
+        tvSubtitle?.setTextColor(Color.parseColor("#4CAF50")) // Muda para verde opcionalmente
+    }
+
+    private fun updateUIDisconnected() {
+        view?.findViewById<FrameLayout>(R.id.btn_add_sensor)?.visibility = View.VISIBLE
+        view?.findViewById<Button>(R.id.btn_sensor_read)?.visibility = View.GONE
+        view?.findViewById<TextView>(R.id.tv_subtitle)?.text = "Available devices"
     }
     companion object {
         /**

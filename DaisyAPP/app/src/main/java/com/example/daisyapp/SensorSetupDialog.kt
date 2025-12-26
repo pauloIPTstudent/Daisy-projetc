@@ -1,5 +1,6 @@
 package com.example.daisyapp
 
+import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.ViewFlipper
 import androidx.fragment.app.DialogFragment
 import com.example.daisyapp.R
@@ -35,6 +37,20 @@ class SensorSetupDialog : DialogFragment() {
             // Lógica para iniciar o Bluetooth ou scanner
             view.findViewById<ViewFlipper>(R.id.viewFlipper).showNext()
         }// */
+    }
+    fun addDeviceToList(device: BluetoothDevice, onClick: () -> Unit) {
+        val container = view?.findViewById<LinearLayout>(R.id.list_container)
+        val deviceName = device.name ?: "Desconhecido"
+
+        // Evita duplicar o mesmo sensor na lista
+        if (container?.findViewWithTag<View>(device.address) == null) {
+            val btn = Button(requireContext()).apply {
+                text = "$deviceName\n${device.address}"
+                tag = device.address
+                setOnClickListener { onClick() }
+            }
+            container?.addView(btn)
+        }
     }
 
     // Opcional: Para fazer o dialog ocupar quase toda a largura da tela
