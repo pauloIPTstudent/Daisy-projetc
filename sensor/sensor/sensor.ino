@@ -85,8 +85,7 @@ void setup() {
 void loop() {
   if (deviceConnected) {
     // Simula a leitura do sensor (Pino 34 ou valor aleatório para teste)
-    int leitura = analogRead(34); 
-    String payload = String(leitura);
+    String payload = "l,98,28,6.5,75";
 
     // Atualiza o valor para o App ler
     pReadCharacteristic->setValue(payload.c_str());

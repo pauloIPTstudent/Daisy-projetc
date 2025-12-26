@@ -25,7 +25,10 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
@@ -224,37 +227,96 @@ class DiagnoseFragment : Fragment() {
         // ESTE É O MÉTODO QUE RECEBE A RESPOSTA DO SEU BOTÃO
         override fun onCharacteristicRead(gatt: BluetoothGatt, char: BluetoothGattCharacteristic, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                val valor = char.getStringValue(0)
 
-                activity?.runOnUiThread {
-                    // Atualize qualquer TextView aqui dentro!
-                    // Exemplo: tv_subtitle.text = "Leitura: $valor"
-                    Log.d("BLE_LOG", "Interface atualizada com valor: $valor")
+
+
+                // Supondo que 'valorRecebido' seja "l,98,28,6.5,75"
+                val valorRecebido = char.getStringValue(0)
+                Log.d("BLE_DEBUG", "1. Raw Data recebido: '$valorRecebido'") // Ver se chegou algo
+
+                if (valorRecebido == null) {
+                    Log.e("BLE_DEBUG", "ERRO: Valor recebido é nulo!")
+                    return
                 }
+
+                val partes = valorRecebido.split(",")
+                Log.d("BLE_DEBUG", "2. Número de partes após split: ${partes.size}")
+
+// Verificamos se é uma leitura (comando 'l') e se tem todos os dados
+                if (partes.size >= 5 && partes[0] == "l") {
+                    Log.i("BLE_DEBUG", "3. Protocolo 'l' detectado. Iniciando conversão...")
+                    try {
+                        val jsonFinal = JSONObject()
+                        jsonFinal.put("sensor_name", "Daisy_Sensor_V2")
+
+                        val bateria = partes[1].trim().toInt()
+                        jsonFinal.put("battery", bateria)
+
+                        val temp = partes[2].trim().toInt()
+                        val soil = partes[3].trim().toDouble() // Mantendo Double para não perder precisão no log
+                        val sun = partes[4].trim().toInt()
+
+                        jsonFinal.put("temperature", temp)
+                        jsonFinal.put("soil_ph", soil) // Se quiser Int no JSON, use .toInt()
+                        jsonFinal.put("sunlight", sun)
+
+
+                        val jsonString = jsonFinal.toString()
+                        Log.d("BLE_DEBUG", "4. JSON gerado com sucesso: $jsonString")
+
+                        activity?.runOnUiThread {
+                            Log.d("BLE_DEBUG", "5. Disparando navegação para ReadingsFragment")
+                            navegarParaReadings(jsonString)
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("BLE_DEBUG", "ERRO na conversão: ${e.message}")
+                        e.printStackTrace()
+                    }
+                } else {
+                    Log.w("BLE_DEBUG", "AVISO: Dados ignorados. Prefixo: ${partes.getOrNull(0)}, Tamanho: ${partes.size}")
+                }
+
+
+
+
             }
         }
     }
+    private fun navegarParaReadings(dadosJson: String) {
+        // Criamos uma nova instância do fragmento de leituras
+        val novoFragmento = ReadingsFragment().apply {
+            arguments = Bundle().apply {
+                putString("dados_sensor", dadosJson)
+            }
+        }
+
+        // Realiza a transição
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView3, novoFragmento) // Use o ID do seu container principal
+            .addToBackStack(null) // Permite que o usuário volte ao sensor ao clicar em "voltar"
+            .commit()
+    }
     // Função para esconder o "Add Sensor" e mostrar o "Read"
     private fun updateUIConnected(sensorName: String) {
-        val btnAddSensor = view?.findViewById<FrameLayout>(R.id.btn_add_sensor)
-        val btnRead = view?.findViewById<Button>(R.id.btn_sensor_read)
-        val tvSubtitle = view?.findViewById<TextView>(R.id.tv_subtitle)
+        val cardAddSensor = view?.findViewById<ConstraintLayout>(R.id.add_sensor_card)
+        val cardSensor = view?.findViewById<ConstraintLayout>(R.id.sensor_card)
+        val tvDeviceName = view?.findViewById<TextView>(R.id.tvDeviceName)
 
         // 1. Esconde o botão de adicionar
-        btnAddSensor?.visibility = View.GONE
+        cardAddSensor?.visibility = View.GONE
 
         // 2. Mostra o botão de leitura
-        btnRead?.visibility = View.VISIBLE
+        cardSensor?.visibility = View.VISIBLE
 
         // 3. Atualiza o texto com o nome do sensor
-        tvSubtitle?.text = "Connected to: $sensorName"
-        tvSubtitle?.setTextColor(Color.parseColor("#4CAF50")) // Muda para verde opcionalmente
+        tvDeviceName?.text = "$sensorName"
     }
 
     private fun updateUIDisconnected() {
-        view?.findViewById<FrameLayout>(R.id.btn_add_sensor)?.visibility = View.VISIBLE
-        view?.findViewById<Button>(R.id.btn_sensor_read)?.visibility = View.GONE
-        view?.findViewById<TextView>(R.id.tv_subtitle)?.text = "Available devices"
+        view?.findViewById<ConstraintLayout>(R.id.add_sensor_card)?.visibility = View.VISIBLE
+        view?.findViewById<ConstraintLayout>(R.id.sensor_card)?.visibility = View.GONE
+
     }
     companion object {
         /**

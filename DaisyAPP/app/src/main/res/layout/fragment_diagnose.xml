@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DiagnoseFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/add_sensor_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="24dp"
@@ -23,6 +23,8 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
 
         <ImageView
             android:id="@+id/home_logout"
@@ -61,14 +63,73 @@
                 android:textColor="#9E9E9E" />
         </FrameLayout>
 
-        <Button
-            android:layout_marginTop="16dp"
-            android:id="@+id/btn_sensor_read"
-            android:layout_width="match_parent"
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sensor_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F8F9F9"
+        android:padding="24dp"
+        android:layout_marginBottom="60dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvDeviceName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="read"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/btn_add_sensor"/>
+            android:layout_marginTop="32dp"
+            android:text="Daisy_Sensor_V2"
+            android:textColor="#1A1C1E"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Status da bateria: 98% • Sinal forte"
+            android:textColor="#74777F"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDeviceName" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_sensor_read"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_edittext_rounded"
+            android:backgroundTint="@color/green"
+            android:backgroundTintMode="screen"
+            android:drawablePadding="-20dp"
+            android:paddingStart="40dp"
+            android:text="FAZER LEITURA"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tvAviso"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvAviso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Mantenha o celular próximo ao sensor (max 1m)."
+            android:textColor="#9DA3A9"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
