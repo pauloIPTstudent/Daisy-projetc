@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -80,6 +81,10 @@ class PlantFormFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun ImageView.getBitmap(): Bitmap? {
+        return (drawable as? BitmapDrawable)?.bitmap
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -100,6 +105,9 @@ class PlantFormFragment : Fragment() {
                 ivPreview.setImageBitmap(bitmap)
             }
         }
+        if(plantId ==-2){
+            plantBitmap = ivPreview.getBitmap()
+        }
 
         // 2. Clique no Card para abrir a câmera
         cardPhoto.setOnClickListener {
@@ -115,7 +123,7 @@ class PlantFormFragment : Fragment() {
         btnSave.setOnClickListener {
             val name = etPlantName.text.toString()
             val specie = etPlantSpecie.text.toString()
-            if(plantId!=-1){
+            if(plantId>-1){
                 //editPlant
                 editPlant(plantId,name,specie)
 
@@ -142,7 +150,11 @@ class PlantFormFragment : Fragment() {
                 if (sucesso) {
                     // Feedback de sucesso (Ex: Toast ou navegar para outra tela)
                     Toast.makeText(context, R.string.plant_form_add_sucess, Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()
+                    //parentFragmentManager.popBackStack()
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView3, YardFragment()) // R.id.fragment_container é o ID do container na AuthActivity
+                        .commit()
                 }
             } else {
                 // Tratar erro: A API falhou em gerar um ID

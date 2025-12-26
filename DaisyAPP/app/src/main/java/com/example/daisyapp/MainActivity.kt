@@ -5,10 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var icons: List<ImageView>
@@ -78,4 +75,5 @@ class MainActivity : AppCompatActivity() {
     private fun isLogged(): Boolean {
         return SessionManager.hasToken(this)
     }
+
 }

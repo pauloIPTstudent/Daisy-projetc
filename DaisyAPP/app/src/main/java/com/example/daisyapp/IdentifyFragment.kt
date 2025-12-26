@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -140,6 +142,10 @@ class IdentifyFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_identify, container, false)
     }
 
+    fun ImageView.getBitmap(): Bitmap? {
+        return (drawable as? BitmapDrawable)?.bitmap
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -150,6 +156,35 @@ class IdentifyFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
         score = view.findViewById<TextView>(R.id.tvScore)
 
+
+        val btnSave = view.findViewById<Button>(R.id.btnSave)
+        btnSave.setOnClickListener {
+
+            val bitmap = ivPreview.getBitmap()
+
+            if (bitmap != null) {
+                // 2. Chamar o seu Manager de salvamento
+                ImageStorageManager.saveImage(requireContext(), -2, bitmap)
+                val bundle = Bundle().apply {
+                    putInt("EXTRA_ID", -2)
+                    putString("EXTRA_NAME", tvCommonName.text.toString())
+                    putString("EXTRA_SPECIE",tvSpecies.text.toString() )
+                }
+
+                // 2. Criar a instância do fragmento de destino
+                val fragmentDestino = PlantFormFragment()
+                fragmentDestino.arguments = bundle
+
+                // 3. Realizar a transação (Trocar de tela)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView3, fragmentDestino) // Certifique-se que o ID é o do container do seu layout principal
+                    .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar
+                    .commit()
+            } else {
+                Toast.makeText(context, "Erro ao salvar planta", Toast.LENGTH_SHORT).show()
+            }
+
+        }
         // 2. Chamar a verificação de permissão e abertura da câmera automaticamente
         checkCameraPermissionAndOpen()
     }
