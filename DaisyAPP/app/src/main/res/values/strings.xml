@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">DaisyAPP</string>
+    <string name="app_name" translatable="false">DaisyAPP</string>
     <!-- Strings related to sing in e sing up -->
-    <string name="sign_in">Sign In</string>
-    <string name="email">Email</string>
+    <string name="sign_in" translatable="false">Sign In</string>
+    <string name="email" translatable="false">Email</string>
     <string name="sing_in_msg">Hi there! Nice to see you again.</string>
-    <string name="email_placeholder">example@email.com</string>
+    <string name="email_placeholder" translatable="false">example@email.com</string>
     <string name="password">Password</string>
-    <string name="password_placeholder">••••••••••••</string>
+    <string name="password_placeholder" translatable="false">••••••••••••</string>
     <string name="sign_in_action">Sign In</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="sign_up">Sign Up</string>
@@ -32,23 +32,41 @@
     <string name="home_yard_subtitle">Check your yard</string>
 
     <!-- PlantForm -->
-    <string name="plant_form_fillerror">Preencha o nome e tire uma foto!</string>
-    <string name="plant_form_add_sucess">Planta Salva com sucesso!!</string>
-    <string name="plant_form_edit_sucess">Planta Editada com sucesso!!</string>
-    <string name="plant_form_add_error">Erro ao Salvar planta</string>
+    <string name="plant_form_fillerror">Please enter a name and take a photo!</string>
+    <string name="plant_form_add_sucess">Plant saved successfully!!</string>
+    <string name="plant_form_edit_sucess">Plant edited successfully!!</string>
+    <string name="plant_form_add_error">Error saving plant</string>
 
     <!-- Camera -->
-    <string name="camera_permission_error">Permissão de câmera negada</string>
-    <string name="add_plant">ADD Plant</string>
-    <string name="detalhes_da_identifica_o">Detalhes da Identificação</string>
-    <string name="salvar">Salvar</string>
-    <string name="compartilhar">Compartilhar</string>
+    <string name="camera_permission_error">Camera permission denied</string>
+    <string name="add_plant">Add Plant</string>
+    <string name="detalhes_da_identifica_o">Identification Details</string>
+    <string name="salvar">Save</string>
+    <string name="compartilhar">Share</string>
     <string name="tap_to_add_photo">Tap to add photo</string>
     <string name="show_off_your_plant_s_beauty">Show off your plant\'s beauty</string>
     <string name="plant_name">PLANT NAME</string>
     <string name="nickname_optional">NICKNAME (Optional)</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="set_your_daisy_sensor">Set your Daisy® Sensor</string>
+    <string name="_2_steps_and_done">2 Steps and done!</string>
+    <string name="cancel">Cancel</string>
+    <string name="next_step">Next Step</string>
+    <string name="add_a_sensor">Add a sensor</string>
+    <string name="temperature">Temperature</string>
+    <string name="soil">Soil</string>
+    <string name="sunlight">Sunlight</string>
+    <string name="providing_plants_with_the_adequate_amount_of_sunlight_is_the_key">Providing plants with the adequate amount of sunlight is the key.</string>
+    <string name="the_basics_of_soil_preparatio_is_essensial_to_gardening">The Basics of soil preparatio is essensial to gardening.</string>
+    <string name="temperature_is_essencial_for_the_plant_growth">Temperature is essencial for the plant growth.</string>
+    <string name="n_o_foi_poss_vel_obter_a_localiza_o">It was not possible to obtain the localization</string>
+    <string name="erro_ao_compartilhar_imagem">Error sharing image</string>
+    <string name="imagem_inv_lida">Invalid image</string>
+    <string name="erro_ao_salvar_planta">Error saving plant</string>
+    <string name="falha_na_conex_o">Connection failure:</string>
+    <string name="erro_na_identifica_o">Identification error</string>
+    <string name="erro_no_servidor_c_digo">"Server error: Code "</string>
+    <string name="none_picture_were_taken_to_share">none picture were taken to share</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

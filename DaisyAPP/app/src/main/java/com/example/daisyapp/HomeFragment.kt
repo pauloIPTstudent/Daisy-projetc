@@ -180,7 +180,8 @@ class HomeFragment : Fragment() {
                 // mas normalmente APIs de clima usam Double.
                 loadWeatherData(location.latitude.toDouble(), location.longitude.toDouble())
             } else {
-                Toast.makeText(context, "Não foi possível obter a localização", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    getString(R.string.n_o_foi_poss_vel_obter_a_localiza_o), Toast.LENGTH_SHORT).show()
             }
         }
     }

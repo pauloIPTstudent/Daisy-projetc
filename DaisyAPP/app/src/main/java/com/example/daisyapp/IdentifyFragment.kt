@@ -21,8 +21,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import com.google.android.material.button.MaterialButton
 import okhttp3.MultipartBody
 import retrofit2.Call
+import java.io.File
+import java.io.FileOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,15 +84,17 @@ class IdentifyFragment : Fragment() {
 
                 } else {
                     val errorBody = response.errorBody()?.string()
-                    Log.e("IdentifyFragment", "Erro no servidor: Código ${response.code()} - $errorBody")
+                    Log.e("IdentifyFragment", getString(R.string.erro_no_servidor_c_digo)+response.code()+" - "+errorBody)
 
-                    Toast.makeText(context, "Erro na identificação", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,
+                        getString(R.string.erro_na_identifica_o), Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<IdentifyPlantResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(context, "Falha na conexão: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    getString(R.string.falha_na_conex_o)+t.message, Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -162,7 +168,7 @@ class IdentifyFragment : Fragment() {
 
             val bitmap = ivPreview.getBitmap()
 
-            if (bitmap != null) {
+            if (bitmap != null && tvCommonName.text.toString()!="" && tvSpecies.text.isNotEmpty()) {
                 // 2. Chamar o seu Manager de salvamento
                 ImageStorageManager.saveImage(requireContext(), -2, bitmap)
                 val bundle = Bundle().apply {
@@ -181,12 +187,88 @@ class IdentifyFragment : Fragment() {
                     .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar
                     .commit()
             } else {
-                Toast.makeText(context, "Erro ao salvar planta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    getString(R.string.erro_ao_salvar_planta), Toast.LENGTH_SHORT).show()
             }
 
         }
+        val btnShare = view.findViewById<MaterialButton>(R.id.btnShare)
+
+        btnShare.setOnClickListener {
+            compartilharFoto()
+        }
         // 2. Chamar a verificação de permissão e abertura da câmera automaticamente
-        checkCameraPermissionAndOpen()
+        if (plantBitmap == null){
+            checkCameraPermissionAndOpen()
+
+        }
+
+    }
+    private fun compartilharFoto() {
+        // 1. Garantir que temos um Bitmap
+        // 1. Pega o drawable do ImageView
+        val drawable = ivPreview.drawable
+
+        // CONDIÇÃO DE SEGURANÇA: Se não houver imagem, avisa o usuário e sai da função
+        if (drawable == null) {
+            Toast.makeText(requireContext(),
+                getString(R.string.none_picture_were_taken_to_share), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2. Garantir que temos um Bitmap (Convertendo se necessário)
+        val bitmap = if (drawable is BitmapDrawable) {
+            drawable.bitmap
+        } else {
+            // Agora é seguro acessar intrinsicWidth/Height porque verificamos o null acima
+            val width = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 1
+            val height = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 1
+
+            val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val canvas = android.graphics.Canvas(b)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            b
+        }
+
+        if (bitmap == null) {
+            Toast.makeText(requireContext(), getString(R.string.imagem_inv_lida), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            // 2. Criar a pasta e o arquivo no cache
+            val imagesFolder = File(requireContext().cacheDir, "images")
+            imagesFolder.mkdirs() // Cria a pasta se não existir
+            val file = File(imagesFolder, "planta_compartilhada.png")
+
+            val stream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.flush()
+            stream.close()
+
+            // 3. Obter a URI via FileProvider
+            val contentUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider", // Deve bater com o Manifest
+                file
+            )
+
+            // 4. Criar o Intent
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                putExtra(Intent.EXTRA_TEXT, "Olha a minha planta") // Texto opcional
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // ESSENCIAL
+            }
+
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar via"))
+
+        } catch (e: Exception) {
+            Log.e("SHARE_ERROR", "Erro ao compartilhar: ${e.message}")
+            Toast.makeText(requireContext(),
+                getString(R.string.erro_ao_compartilhar_imagem), Toast.LENGTH_SHORT).show()
+        }
     }
     companion object {
         /**

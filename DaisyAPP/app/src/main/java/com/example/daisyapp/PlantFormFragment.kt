@@ -215,7 +215,7 @@ class PlantFormFragment : Fragment() {
                     override fun onResponse(call: Call<CreatePlantResponse>, response: Response<CreatePlantResponse>) {
                         if (response.isSuccessful) {
                             val newId = response.body()?.id
-                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
                             onResult(newId) // "Retorna" o ID para quem chamou
                         } else {
                             onResult(null)
@@ -244,7 +244,7 @@ class PlantFormFragment : Fragment() {
                         if (response.isSuccessful) {
                             val sucess = response.body()?.success
                             Log.d("DEBUG_EDIT", "Sucesso no Servidor! Resposta: $sucess")
-                            Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(context, R.string.plant_form_edit_sucess, Toast.LENGTH_SHORT).show()
                             onResult(sucess) // "Retorna" o ID para quem chamou
                         } else {
                             val erroCorpo = response.errorBody()?.string()

@@ -70,7 +70,7 @@
                         android:id="@+id/tvCommonName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="[.....]"
+                        android:text=""
                         android:textColor="#FFFFFF"
                         android:textSize="32sp"
                         android:textStyle="bold" />
@@ -79,7 +79,7 @@
                         android:id="@+id/tvSpecies"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="[...]"
+                        android:text=""
                         android:textColor="#CCCCCC"
                         android:textSize="18sp"
                         android:textStyle="italic" />
@@ -88,7 +88,7 @@
                         android:id="@+id/tvScore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="[---]"
+                        android:text=""
                         android:textColor="#FFFFFF"
                         android:alpha="0.7"
                         android:textSize="12sp" />
