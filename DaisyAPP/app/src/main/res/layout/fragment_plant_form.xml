@@ -46,7 +46,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:text="Tap to add photo"
+                            android:text="@string/tap_to_add_photo"
                             android:textColor="#1D232E"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -55,7 +55,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Show off your plant's beauty"
+                            android:text="@string/show_off_your_plant_s_beauty"
                             android:textColor="#78849E"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="PLANT NAME"
+                android:text="@string/plant_name"
                 android:textColor="#454F63"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="NICKNAME (Optional)"
+                android:text="@string/nickname_optional"
                 android:textColor="#454F63"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -106,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/green"
-                android:text="SAVE"
+                android:text="@string/salvar"
                 android:layout_marginTop="70dp"/>
         </LinearLayout>
 
