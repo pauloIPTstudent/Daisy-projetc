@@ -40,6 +40,13 @@
     <!-- Camera -->
     <string name="camera_permission_error">Permissão de câmera negada</string>
     <string name="add_plant">ADD Plant</string>
+    <string name="detalhes_da_identifica_o">Detalhes da Identificação</string>
+    <string name="salvar">Salvar</string>
+    <string name="compartilhar">Compartilhar</string>
+    <string name="tap_to_add_photo">Tap to add photo</string>
+    <string name="show_off_your_plant_s_beauty">Show off your plant\'s beauty</string>
+    <string name="plant_name">PLANT NAME</string>
+    <string name="nickname_optional">NICKNAME (Optional)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

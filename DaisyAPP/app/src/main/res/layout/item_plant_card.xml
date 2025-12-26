@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:padding="4dp"
-                android:src="@drawable/camera"
+                android:src="@drawable/nouce_edit"
                 android:layout_marginStart="8dp" />
 
         </LinearLayout>

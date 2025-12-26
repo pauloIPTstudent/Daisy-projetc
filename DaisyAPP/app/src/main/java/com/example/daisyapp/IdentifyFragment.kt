@@ -74,7 +74,7 @@ class IdentifyFragment : Fragment() {
                     val plant = response.body()
                     tvCommonName.text = "${plant?.common_name}"
                     tvSpecies.text = "${plant?.species}"
-                    if(plant?.score!=null){score.text = "${plant.score*10}% Match"}
+                    if(plant?.score!=null){score.text = "${plant.score*100}% Match"}
 
                 } else {
                     val errorBody = response.errorBody()?.string()
