@@ -238,7 +238,7 @@ def weather():
     lon = dados_entrada['lon']
 
     # 2. Monta a URL (units=metric garante Celsius)
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=16a1970b07b3a55ee0f1d963672282be&units=metric"
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&lang=pt&appid=16a1970b07b3a55ee0f1d963672282be&units=metric"
     try:
         # 3. Faz a ponte com a API externa
         resposta = requests.get(url)
@@ -249,7 +249,7 @@ def weather():
             saida = {
                 "cidade": dados_clima.get('name'),
                 "celsius": dados_clima['main'].get('temp'),
-                "tempo_principal": dados_clima['weather'][0].get('main') # Ex: Rain, Clouds, Clear
+                "tempo_principal": dados_clima['weather'][0].get('description') # Ex: Rain, Clouds, Clear
             }
             return jsonify(saida), 200
         else:
