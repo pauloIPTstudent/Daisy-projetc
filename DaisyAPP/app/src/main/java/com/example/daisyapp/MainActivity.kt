@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.nav_diagnose),
             findViewById(R.id.nav_camera),
             findViewById(R.id.nav_yard),
-            findViewById(R.id.nav_explore)
+            findViewById(R.id.nav_about)
         )
 
         // Configura o clique para cada um
@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity() {
     fun handleNavigation(selectedId: Int) {
         val fragment = when (selectedId) {
             R.id.nav_home -> HomeFragment()
-            /**/R.id.nav_diagnose -> DiagnoseFragment()
-            /**/R.id.nav_camera -> IdentifyFragment()// */
+            R.id.nav_diagnose -> DiagnoseFragment()
+            R.id.nav_camera -> IdentifyFragment()
             R.id.nav_yard -> YardFragment()
-            //R.id.nav_explore -> ExploreFragment()*/
+            R.id.nav_about -> AboutFragment()
             else -> HomeFragment()
         }
 

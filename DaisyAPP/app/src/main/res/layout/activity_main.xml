@@ -49,7 +49,7 @@
             app:tint="#BDBDBD" />
 
         <ImageView
-            android:id="@+id/nav_explore"
+            android:id="@+id/nav_about"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"

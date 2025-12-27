@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">DaisyAPP</string>
     <!-- Strings related to sing in e sing up -->
-    <string name="sign_in" translatable="false">Sign In</string>
+    <string name="sign_in">Sign In</string>
     <string name="email" translatable="false">Email</string>
     <string name="sing_in_msg">Hi there! Nice to see you again.</string>
     <string name="email_placeholder" translatable="false">example@email.com</string>
@@ -74,6 +74,8 @@
     <string name="label_temperature">Temperature</string>
     <string name="label_soil_ph">Soil pH</string>
     <string name="label_sunlight">Sunlight</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

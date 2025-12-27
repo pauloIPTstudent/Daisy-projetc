@@ -62,5 +62,6 @@
     <string name="label_temperature">Temperatura</string>
     <string name="label_soil_ph">pH do Solo</string>
     <string name="label_sunlight">Luz Solar</string>
+    <string name="sign_in">Entrar</string>
 
 </resources>
