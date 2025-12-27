@@ -74,13 +74,13 @@ class ReadingsFragment : Fragment() {
                 tvTitle?.text = "🪴 $name"
 
                 pbTemp?.progress = temp
-                resTemp?.text = gerarResumo("Temperature", temp, "°C", 15, 30)
+                resTemp?.text = gerarResumo(R.string.label_temperature, temp, "°C", 15, 30)
 
                 pbSoil?.progress = soil.toInt()
-                resSoil?.text = gerarResumo("Soil pH", soil.toInt(), " pH", 5, 8)
+                resSoil?.text = gerarResumo(R.string.label_soil_ph, soil.toInt(), " pH", 5, 8)
 
                 pbSun?.progress = sun
-                resSun?.text = gerarResumo("Sunlight", sun, "%", 30, 70)
+                resSun?.text = gerarResumo(R.string.label_sunlight, sun, "%", 30, 70)
 
                 Log.i("READINGS_FRAGMENT", "UI Aplicada: Temp=$temp, Soil=$soil, Sun=$sun")
             } catch (e: Exception) {
@@ -94,14 +94,20 @@ class ReadingsFragment : Fragment() {
      * Função de Regra: Define se o nível está baixo, médio ou alto
      * com base em limites (thresholds) customizáveis.
      */
-    private fun gerarResumo(nome: String, valor: Int, unidade: String, limiteBaixo: Int, limiteAlto: Int): String {
-        val nivel = when {
-            valor < limiteBaixo -> "Low"
-            valor in limiteBaixo..limiteAlto -> "Ideal/Medium"
-            else -> "High"
+    private fun gerarResumo(nomeResId: Int, valor: Int, unidade: String, limiteBaixo: Int, limiteAlto: Int): String {
+        // 1. Define qual ID de string de "nível" usar
+        val nivelResId = when {
+            valor < limiteBaixo -> R.string.level_low
+            valor in limiteBaixo..limiteAlto -> R.string.level_ideal
+            else -> R.string.level_high
         }
 
-        return "Right now, the $nome is $valor$unidade, it means '$nivel'."
+        // 2. Busca as traduções
+        val nomeTraduzido = getString(nomeResId)
+        val nivelTraduzido = getString(nivelResId)
+
+        // 3. Monta a frase final usando placeholders (%s para texto, %d para números)
+        return getString(R.string.reading_summary, nomeTraduzido, valor, unidade, nivelTraduzido)
     }
     companion object {
         /**
