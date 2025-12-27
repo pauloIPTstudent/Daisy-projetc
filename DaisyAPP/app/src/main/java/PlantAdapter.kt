@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +18,12 @@ class PlantAdapter(private var plants: List<Plant>,private val listener: OnItemC
         val nickname: TextView = view.findViewById(R.id.plant_nickname)
         val image: ImageView = view.findViewById(R.id.plant_image)
 
+        val delete: ImageButton = view.findViewById<ImageButton>(R.id.btn_delete_plant)
+
     }
     interface OnItemClickListener {
         fun onItemClick(data: Plant)
+        fun onDeleteClick(id: Int)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_plant_card, parent, false)
@@ -47,6 +51,12 @@ class PlantAdapter(private var plants: List<Plant>,private val listener: OnItemC
         holder.itemView.setOnClickListener {
             listener.onItemClick(plant)
         }
+
+        holder.delete.setOnClickListener {
+            listener.onDeleteClick(plant.id)
+        }
+
+
     }
 
     override fun getItemCount() = plants.size

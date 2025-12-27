@@ -1,6 +1,7 @@
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -39,6 +40,12 @@ interface ApiService {
         @Body request: EditPlantRequest
     ): Call<EditPlantResponse>
 
+
+    @DELETE("deleteplant")
+    fun deletePlant(
+        @Header("Authorization") token: String,
+        @Body request: DeletePlantRequest
+    ): Call<DeletePlatResponse>
 
     @Multipart
     @POST("identify")
