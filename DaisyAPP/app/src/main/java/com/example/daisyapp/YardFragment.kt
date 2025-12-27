@@ -73,20 +73,18 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
     }
 
     override fun onDeleteClick(id: Int) {
-        val request = DeletePlantRequest(id)
+        val request :DeletePlantRequest = DeletePlantRequest(id)
         val token = SessionManager.fetchAuthToken(requireContext())
-        RetrofitClient.instance.deletePlant(request).enqueue(object : Callback<DeletePlatResponse> {
+        RetrofitClient.instance.deletePlant("Bearer $token",request).enqueue(object : Callback<DeletePlatResponse> {
             override fun onResponse(call: Call<DeletePlatResponse>, response: Response<DeletePlatResponse>) {
                 if (response.isSuccessful) {
                     if (token != null) {
                         // Guardar o token no nosso Singleton de sessão
                         //Log.e("API_DEBUG", "token: ${token}")
-                        Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Planta apagada", Toast.LENGTH_SHORT).show()
 
-                        // Ir para a MainActivity
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
+                        // Refresh
+                        loadPlants()
                     }
                 } else {
                     // ERRO: Credenciais inválidas (ex: 401)

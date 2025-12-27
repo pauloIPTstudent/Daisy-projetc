@@ -72,7 +72,7 @@
             android:layout_height="32dp"
             android:layout_gravity="top|end"
             android:layout_margin="12dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="#FFFFFF"
             android:elevation="4dp"
             android:padding="6dp"
             android:src="@drawable/close"
