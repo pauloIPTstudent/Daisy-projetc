@@ -31,6 +31,13 @@ data class EditPlantResponse(
     val success: Boolean
 )
 
+data class DeletePlantRequest(
+    val id:Int
+)
+
+data class DeletePlatResponse(
+    val success: Boolean
+)
 
 data class IdentifyPlantResponse(
     val common_name: String,

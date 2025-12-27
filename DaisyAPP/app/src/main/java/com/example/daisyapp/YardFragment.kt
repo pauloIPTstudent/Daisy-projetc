@@ -1,8 +1,13 @@
 package com.example.daisyapp
 
+import AuthResponse
+import DeletePlantRequest
+import DeletePlatResponse
 import Plant
 import PlantAdapter
+import PlantRequest
 import PlantResponse
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -66,6 +71,38 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
         loadPlants()
 
     }
+
+    override fun onDeleteClick(id: Int) {
+        val request = DeletePlantRequest(id)
+        val token = SessionManager.fetchAuthToken(requireContext())
+        RetrofitClient.instance.deletePlant(request).enqueue(object : Callback<DeletePlatResponse> {
+            override fun onResponse(call: Call<DeletePlatResponse>, response: Response<DeletePlatResponse>) {
+                if (response.isSuccessful) {
+                    if (token != null) {
+                        // Guardar o token no nosso Singleton de sessão
+                        //Log.e("API_DEBUG", "token: ${token}")
+                        Toast.makeText(context, R.string.api_login_success, Toast.LENGTH_SHORT).show()
+
+                        // Ir para a MainActivity
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                } else {
+                    // ERRO: Credenciais inválidas (ex: 401)
+                    Toast.makeText(context, R.string.api_login_error400, Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("API_ERROR", "Código: ${response.code()} - Erro: $errorBody")                    }
+            }
+
+            override fun onFailure(call: Call<DeletePlatResponse>, t: Throwable) {
+                // ERRO DE REDE: Sem internet ou servidor offline
+                Toast.makeText(context, R.string.api_login_conectivity_error, Toast.LENGTH_SHORT).show()
+                Log.e("API_ERROR", "Erro: ${t.message}")
+            }
+        })
+
+        }
     override fun onItemClick(data: Plant) {
         // 1. Criar o Bundle com as mesmas chaves que você definiu no PlantFormFragment
         val bundle = Bundle().apply {
