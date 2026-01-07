@@ -94,7 +94,7 @@ class SingInFragment : Fragment() {
         //goto singup
         val buttonSignUp = view.findViewById<TextView>(R.id.tvSignUp)
         buttonSignUp.setOnClickListener {
-            //troca o fragemento no fragmentConteinerView (AuthActivityview)
+            //troca o fragemento no fragmentConteinerView (AuthActivityview) para a pagina/fragmento de update
             parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, SingUpFragment()) // R.id.fragment_container é o ID do container na AuthActivity
             //.addToBackStack(null) // Permite que o utilizador volte ao Login ao carregar no botão "Retroceder"

@@ -76,6 +76,8 @@
     <string name="label_sunlight">Sunlight</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_the_app">DaisyApp é o seu companheiro de bolso para descobrir o mundo natural. Nossa missão é conectar você à biodiversidade ao seu redor. Aponte sua câmera, clique para identificar.</string>
+    <string name="about_creator_view">\'Desenvolvi o DaisyApp como uma ponte entre a tecnologia e a natureza. Sou um desenvolvedor apaixonado por notãnica que acredita que o conhecimento sobre o meio ambiente deve ser acessível a todos, em qualquer lugar. Este projeto é fruto de noites em ciaro e muitas trilhas.\'</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

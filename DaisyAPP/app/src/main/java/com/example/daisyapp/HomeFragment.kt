@@ -68,7 +68,8 @@ class HomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<ImageView>(R.id.home_logout).setOnClickListener{
+
+        view.findViewById<ImageView>(R.id.home_logout).setOnClickListener{//ação de logout
             //apaga key
             SessionManager.clearSession(requireContext())
             // 2. Cria a Intent para a MainActivity
@@ -101,7 +102,7 @@ class HomeFragment : Fragment() {
 
 
 
-
+        //ação da barra de pesquisa
 
         val searchBar = view.findViewById<EditText>(R.id.search_bar)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_search_results)
@@ -117,7 +118,7 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = plantAdapter
 
-
+        //listener para search bar
         searchBar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 Log.d("SearchDeubug", "pesquisando")
@@ -146,11 +147,11 @@ class HomeFragment : Fragment() {
 
 
 
-        // 1. Inicialize IMEDIATAMENTE ao criar a view
+        // pede localização, pede clima e lugar atual para api , atualiza consoante resposta
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         checkLocationPermissionAndGetWeather()
     }
-
+    //pede permissão
     private fun checkLocationPermissionAndGetWeather() {
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()

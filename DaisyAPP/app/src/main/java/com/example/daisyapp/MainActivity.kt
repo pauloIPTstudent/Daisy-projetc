@@ -12,11 +12,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        //verifica se o ultilizador esta logado
         if (!isLogged()) {
+            // caso não esteja reencaminha para a pagina de login
             gotoAuth()
         }
-        // Inicializa a lista de ícones
+        // faz o mappgind do icones da barra de navegação do 'fundo' (bottom navbar)
         icons = listOf(
             findViewById(R.id.nav_home),
             findViewById(R.id.nav_diagnose),
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.nav_about)
         )
 
-        // Configura o clique para cada um
+        // Configura o clique para cada icone/botão
         icons.forEach { icon ->
             icon.setOnClickListener {
                 handleNavigation(it.id)
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         updateIconColors(selectedId)
     }
 
+    //coresponde a cor do icone selecionado consoaante a pagina aberta
     private fun updateIconColors(selectedId: Int) {
         icons.forEach { icon ->
             if (icon.id == selectedId) {
@@ -68,12 +70,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun gotoAuth() {
+        //abre a activity de autenticação
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish() // impede voltar para a MainActivity
     }
     private fun isLogged(): Boolean {
+        //verifica se o ultilizador tem um token guardado atualmente
         return SessionManager.hasToken(this)
+        //futuramente deve fazer um pedido para validar o token
     }
 
 }
