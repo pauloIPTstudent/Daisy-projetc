@@ -6,7 +6,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".AboutFragment"
     android:layout_marginBottom="60dp">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,15 +21,13 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/flower"
-                android:tint="@color/green"
-                android:background="@drawable/bg_edittext_rounded"
-                android:padding="16dp" />
+                android:background="@mipmap/daisy_logo_round"
+                app:tint="@color/green" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DaisyApp"
+                android:text="@string/app_name"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@color/green"
@@ -61,7 +62,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/leaf"
-                    android:tint="@color/green"/>
+                    app:tint="@color/green"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -75,7 +76,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DaisyApp é o seu companheiro de bolso para descobrir o mundo natural. Nossa missão é conectar você à biodiversidade ao seu redor. Aponte sua câmera, clique para identificar."
+                android:text="@string/about_the_app"
                 android:layout_marginTop="12dp"
                 android:lineSpacingExtra="4dp"
                 android:textColor="#666666" />
@@ -105,7 +106,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/camera"
-                            android:tint="@color/green"/>
+                            app:tint="@color/green"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -133,7 +134,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/salve"
-                            android:tint="@color/green"/>
+                            app:tint="@color/green"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -183,7 +184,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=" 'Desenvolvi o DaisyApp como uma ponte entre a tecnologia e a natureza. Sou um desenvolvedor apaixonado por notãnica que acredita que o conhecimento sobre o meio ambiente deve ser acessível a todos, em qualquer lugar. Este projeto é fruto de noites em ciaro e muitas trilhas.'"
+                        android:text="@string/about_creator_view"
+                        android:textAlignment="textStart"
                         android:textColor="#555555" />
 
                     <View
@@ -195,7 +197,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DEV TEAM"
+                        android:text="PAULO DANIEL Nº24880"
                         android:layout_gravity="end"
                         android:textSize="10sp"
                         android:textStyle="bold"
@@ -242,7 +244,7 @@
 
             </LinearLayout>
         </LinearLayout>
-
+    </ScrollView>
 </FrameLayout>
 
 
