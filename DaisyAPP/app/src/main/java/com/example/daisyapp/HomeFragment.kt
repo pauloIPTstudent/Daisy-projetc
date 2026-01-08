@@ -72,16 +72,16 @@ class HomeFragment : Fragment() {
         view.findViewById<ImageView>(R.id.home_logout).setOnClickListener{//ação de logout
             //apaga key
             SessionManager.clearSession(requireContext())
-            // 2. Cria a Intent para a MainActivity
+            // Cria a Intent para a MainActivity
             val intent = Intent(requireContext(), MainActivity::class.java)
 
-            // 3. Limpa a pilha de atividades para que o usuário não consiga voltar
+            // Limpa a pilha de atividades para que o usuário não consiga voltar
             // para a tela anterior ao apertar o botão "Voltar" do celular
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
             startActivity(intent)
 
-            // 4. (Opcional) Finaliza a instância atual da atividade
+            // (Opcional) Finaliza a instância atual da atividade
             activity?.finish()
         }
         /**/// Referência para o card de Diagnose
@@ -186,6 +186,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    //carrega o forcast + cidade de acordo com a localização (lat,lon)
     private fun loadWeatherData(lat: Double, lon: Double) {
         val request = WeatherRequest(lat, lon)
 
@@ -196,15 +197,15 @@ class HomeFragment : Fragment() {
 
                     // Preenchendo os campos com os dados da API
                     weather?.let {
-                        // 1. Status do Tempo (ex: Sunny)
+                        // Status do Tempo (ex: Sunny)
                         view?.findViewById<TextView>(R.id.tv_weather_status)?.text = it.tempo_principal
 
-                        // 2. Temperatura (adicionando o símbolo de grau)
+                        // Temperatura (adicionando o símbolo de grau)
                         // Usamos String.format para remover casas decimais extras
                         val tempFormatted = "${it.celsius.toInt()}°"
                         view?.findViewById<TextView>(R.id.tv_temperature)?.text = tempFormatted
 
-                        // 3. Data e Localização
+                        // Data e Localização
                         // Como a API retorna a cidade, mantemos a data atual fixa ou via Calendar
                         val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
                         val currentDate = sdf.format(Date()).uppercase() // Formata e coloca em maiúsculas
@@ -253,11 +254,11 @@ class HomeFragment : Fragment() {
             putString("EXTRA_SPECIE", plant.specie)
         }
 
-        // 2. Criar a instância do fragmento de destino
+        // Criar a instância do fragmento de destino
         val fragmentDestino = PlantFormFragment()
         fragmentDestino.arguments = bundle
 
-        // 3. Realizar a transação (Trocar de tela)
+        // Realizar a transação (Trocar de tela)
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView3, fragmentDestino) // Certifique-se que o ID é o do container do seu layout principal
             .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar

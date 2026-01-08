@@ -45,7 +45,7 @@ class PlantAdapter(private var plants: List<Plant>,private val listener: OnItemC
             holder.image.setImageBitmap(bitmap)
         } else {
             // 3. Se não existir (ou for a primeira vez), carrega a imagem padrão do projeto
-            holder.image.setImageResource(R.drawable.home)
+            holder.image.setImageResource(R.drawable.flower)
         }
         // Detecta o clique no card inteiro
         holder.itemView.setOnClickListener {

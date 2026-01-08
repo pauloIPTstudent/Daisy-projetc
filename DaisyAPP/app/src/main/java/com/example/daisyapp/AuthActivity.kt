@@ -19,6 +19,7 @@ class AuthActivity : AppCompatActivity() {
         }
         // Simulação da checagem (por enquanto sempre true = não autenticado)
 
+
     }
 
 }

@@ -72,7 +72,7 @@ class IdentifyFragment : Fragment() {
         val body = MultipartBody.Part.createFormData("image", "plant.jpg", requestFile)
 
 
-        // Chamar API (Certifique-se de ter sua instância do Retrofit pronta)
+        // Chamar API
         RetrofitClient.instance.identifyPlant(body).enqueue(object : retrofit2.Callback<IdentifyPlantResponse> {
             override fun onResponse(call: Call<IdentifyPlantResponse>, response: retrofit2.Response<IdentifyPlantResponse>) {
                 progressBar.visibility = View.GONE
@@ -98,6 +98,7 @@ class IdentifyFragment : Fragment() {
             }
         })
     }
+    //requisa permissão do ultilizador para usar a camera
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -108,6 +109,8 @@ class IdentifyFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
+
+    //reencaminha para uma action de camera
     private fun openCamera() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
@@ -117,16 +120,17 @@ class IdentifyFragment : Fragment() {
         }
     }
 
+    //usa as funções requestPremissionLauncher e openCamera
     private fun checkCameraPermissionAndOpen() {
         when {
-            // Caso 1: A permissão já foi concedida
+            // A permissão já foi concedida
             ContextCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED -> {
                 openCamera()
             }
-            // Caso 2: A permissão ainda não foi pedida ou foi negada antes
+            // A permissão ainda não foi pedida ou foi negada antes
             else -> {
                 requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
             }
@@ -148,6 +152,7 @@ class IdentifyFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_identify, container, false)
     }
 
+    //função auxiliar para pegar o bitmap do imageview
     fun ImageView.getBitmap(): Bitmap? {
         return (drawable as? BitmapDrawable)?.bitmap
     }
@@ -155,7 +160,7 @@ class IdentifyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Inicializar a referência do ImageView
+        // Inicializar a referência do ImageView
         ivPreview = view.findViewById(R.id.Identify_photo_card)
         tvCommonName = view.findViewById(R.id.tvCommonName)
         tvSpecies = view.findViewById(R.id.tvSpecies)
@@ -169,7 +174,7 @@ class IdentifyFragment : Fragment() {
             val bitmap = ivPreview.getBitmap()
 
             if (bitmap != null && tvCommonName.text.toString()!="" && tvSpecies.text.isNotEmpty()) {
-                // 2. Chamar o seu Manager de salvamento
+                // Chamar o seu Manager de salvamento
                 ImageStorageManager.saveImage(requireContext(), -2, bitmap)
                 val bundle = Bundle().apply {
                     putInt("EXTRA_ID", -2)
@@ -177,11 +182,11 @@ class IdentifyFragment : Fragment() {
                     putString("EXTRA_SPECIE",tvSpecies.text.toString() )
                 }
 
-                // 2. Criar a instância do fragmento de destino
+                // Criar a instância do fragmento de destino
                 val fragmentDestino = PlantFormFragment()
                 fragmentDestino.arguments = bundle
 
-                // 3. Realizar a transação (Trocar de tela)
+                // Realizar a transação (Trocar de tela)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView3, fragmentDestino) // Certifique-se que o ID é o do container do seu layout principal
                     .addToBackStack(null) // Adiciona à pilha para o botão 'voltar' funcionar
@@ -197,7 +202,7 @@ class IdentifyFragment : Fragment() {
         btnShare.setOnClickListener {
             compartilharFoto()
         }
-        // 2. Chamar a verificação de permissão e abertura da câmera automaticamente
+        // Chama a verificação de permissão e abertura da câmera automaticamente
         if (plantBitmap == null){
             checkCameraPermissionAndOpen()
 
@@ -205,8 +210,8 @@ class IdentifyFragment : Fragment() {
 
     }
     private fun compartilharFoto() {
-        // 1. Garantir que temos um Bitmap
-        // 1. Pega o drawable do ImageView
+        // Garantir que temos um Bitmap
+        // Pega o drawable do ImageView
         val drawable = ivPreview.drawable
 
         // CONDIÇÃO DE SEGURANÇA: Se não houver imagem, avisa o usuário e sai da função
@@ -216,7 +221,7 @@ class IdentifyFragment : Fragment() {
             return
         }
 
-        // 2. Garantir que temos um Bitmap (Convertendo se necessário)
+        // Garantir que temos um Bitmap (Convertendo se necessário)
         val bitmap = if (drawable is BitmapDrawable) {
             drawable.bitmap
         } else {
@@ -232,12 +237,13 @@ class IdentifyFragment : Fragment() {
         }
 
         if (bitmap == null) {
+            //notifica o ultilizador
             Toast.makeText(requireContext(), getString(R.string.imagem_inv_lida), Toast.LENGTH_SHORT).show()
             return
         }
 
         try {
-            // 2. Criar a pasta e o arquivo no cache
+            // Criar a pasta e o arquivo no cache
             val imagesFolder = File(requireContext().cacheDir, "images")
             imagesFolder.mkdirs() // Cria a pasta se não existir
             val file = File(imagesFolder, "planta_compartilhada.png")
@@ -247,14 +253,14 @@ class IdentifyFragment : Fragment() {
             stream.flush()
             stream.close()
 
-            // 3. Obter a URI via FileProvider
+            // Obter a URI via FileProvider
             val contentUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.fileprovider", // Deve bater com o Manifest
                 file
             )
 
-            // 4. Criar o Intent
+            // Criar o Intent
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "image/png"
                 putExtra(Intent.EXTRA_STREAM, contentUri)

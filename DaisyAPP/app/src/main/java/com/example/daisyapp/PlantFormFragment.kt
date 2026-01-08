@@ -101,7 +101,7 @@ class PlantFormFragment : Fragment() {
             val bitmap = ImageStorageManager.getImage(requireContext(), plantId)
 
             if (bitmap != null) {
-                // 2. Se a foto existir, carrega o Bitmap
+                // Se a foto existir, carrega o Bitmap
                 ivPreview.setImageBitmap(bitmap)
             }
         }
@@ -109,7 +109,7 @@ class PlantFormFragment : Fragment() {
             plantBitmap = ivPreview.getBitmap()
         }
 
-        // 2. Clique no Card para abrir a câmera
+        // Clique no Card para abrir a câmera
         cardPhoto.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try {
@@ -119,7 +119,7 @@ class PlantFormFragment : Fragment() {
             }
         }
 
-        // 3. Clique no botão Salvar
+        // Clique no botão Salvar
         btnSave.setOnClickListener {
             val name = etPlantName.text.toString()
             val specie = etPlantSpecie.text.toString()
@@ -144,7 +144,7 @@ class PlantFormFragment : Fragment() {
         // Lógica para salvar no Banco de Dados ou enviar para API
         sendAddPlantResquest(name,speecie){ idRetornado ->
             if (idRetornado != null) {
-                // 2. Se o ID existir, salva a foto usando o ID como nome
+                // Se o ID existir, salva a foto usando o ID como nome
                 val sucesso = ImageStorageManager.saveImage( context,idRetornado, foto)
 
                 if (sucesso) {

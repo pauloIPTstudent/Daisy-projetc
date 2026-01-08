@@ -88,7 +88,7 @@
                         android:layout_marginTop="16dp">
 
                         <TextView
-                            android:id="@+id/tvMin"
+                            android:id="@+id/tvTempMin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0°C"
@@ -96,7 +96,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvMax"
+                            android:id="@+id/tvTempMax"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
@@ -109,7 +109,7 @@
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="12dp"
-                            android:layout_below="@id/tvMin"
+                            android:layout_below="@id/tvTempMin"
                             android:layout_marginTop="4dp"
                             android:max="40"
                             android:progress="20"/>
@@ -159,7 +159,7 @@
                         android:layout_marginTop="16dp">
 
                         <TextView
-                            android:id="@+id/tvMin"
+                            android:id="@+id/tvSoilMin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1 pH"
@@ -167,7 +167,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvMax"
+                            android:id="@+id/tvSoilMax"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
@@ -180,7 +180,7 @@
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="12dp"
-                            android:layout_below="@id/tvMin"
+                            android:layout_below="@id/tvSoilMin"
                             android:layout_marginTop="4dp"
                             android:max="14"
                             android:progress="7"/>
@@ -231,7 +231,7 @@
                         android:layout_marginTop="16dp">
 
                         <TextView
-                            android:id="@+id/tvMin"
+                            android:id="@+id/tvSunlightMin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0%"
@@ -239,7 +239,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvMax"
+                            android:id="@+id/tvSunlightMax"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
@@ -252,7 +252,7 @@
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="12dp"
-                            android:layout_below="@id/tvMin"
+                            android:layout_below="@id/tvSunlightMin"
                             android:layout_marginTop="4dp"
                             android:max="100"
                             android:progress="60"/>

@@ -227,6 +227,15 @@ class DiagnoseFragment : Fragment() {
         // ESTE É O MÉTODO QUE RECEBE A RESPOSTA DO SEU BOTÃO
         override fun onCharacteristicRead(gatt: BluetoothGatt, char: BluetoothGattCharacteristic, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                //Dado a natureza do BLE só consigo passa 23 bytes por emissão,
+                //Então ara evitar complicações a resposta esperada foi comprimida
+                //A respota tem entre 20-22 bytes
+                // estrutura: "l,98,28,6.5,75"
+                //l - leitura
+                //98 - bateria
+                //28 - temperatura
+                //6.5 - ph
+                //75 - indicie de incidendia de luz
 
 
 
