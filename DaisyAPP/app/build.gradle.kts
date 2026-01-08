@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.daisyapp"
-    compileSdk  = 34
+    namespace = "com.GoToExpress.daisyapp"
+    compileSdk  = 35
 
     defaultConfig {
-        applicationId = "com.example.daisyapp"
+        applicationId = "com.GoToExpress.daisyapp"
         minSdk = 25
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 4
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

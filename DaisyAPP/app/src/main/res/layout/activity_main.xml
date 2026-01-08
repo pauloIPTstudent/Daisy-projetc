@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:paddingTop="30dp"
+    android:paddingBottom="30dp">
 
     <LinearLayout
         android:id="@+id/bottom_nav"
@@ -53,14 +55,14 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
-            android:src="@drawable/user"
+            android:src="@drawable/book_86162"
             app:tint="#BDBDBD" />
     </LinearLayout>
 
 
 <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView3"
-        android:name="com.example.daisyapp.HomeFragment"
+        android:name="com.GoToExpress.daisyapp.HomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
