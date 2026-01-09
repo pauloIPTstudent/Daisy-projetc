@@ -16,7 +16,7 @@ import androidx.annotation.RequiresPermission
 import androidx.fragment.app.DialogFragment
 import com.GoToExpress.daisyapp.R
 
-class SensorSetupDialog(private val listener: OnDestroyListener) : DialogFragment() {
+class SensorSetupDialog() : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +28,7 @@ class SensorSetupDialog(private val listener: OnDestroyListener) : DialogFragmen
         fun onDestroyDialog()
     }
 
+    var onDestroyListener: OnDestroyListener? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,6 +74,6 @@ class SensorSetupDialog(private val listener: OnDestroyListener) : DialogFragmen
 
     override fun onDestroyView() {
         super.onDestroyView()
-        listener.onDestroyDialog()
+        onDestroyListener?.onDestroyDialog()
     }
 }
