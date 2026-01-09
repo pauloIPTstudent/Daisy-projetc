@@ -57,7 +57,8 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
 
     // Objetos de sistema
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
-        val manager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+
+        val manager = getContext()?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         manager.adapter
     }
 
@@ -88,13 +89,17 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         val btnAddSensor = view.findViewById<FrameLayout>(R.id.btn_add_sensor)
         btnAddSensor.setOnClickListener {
 
-            val dialog = SensorSetupDialog(this)
-
+            val dialog = SensorSetupDialog()
+            dialog.onDestroyListener = this
             // Configuramos o listener ANTES de começar o scan
             deviceListUpdateListener = @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) { device ->
                 // Esta função deve ser criada dentro do seu SensorSetupDialog.kt
                 if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
+                        try {
+                            requireContext()
+                        } catch (e: Exception) {
+                            TODO("Not yet implemented")
+                        },
                         Manifest.permission.BLUETOOTH_CONNECT
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
@@ -112,12 +117,14 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
 
             val btnLerSensor = view.findViewById<Button>(R.id.btn_sensor_read)
             btnLerSensor.setOnClickListener @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
+                getContext()?.let { it1 ->
+                    if (ActivityCompat.checkSelfPermission(
+                            it1,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
 
+                    }
                 }
                 solicitarLeituraDoSensor()
             }
@@ -135,7 +142,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         bluetoothGatt?.close()
         bluetoothGatt = null
         // false indica que queremos conectar diretamente agora, sem esperar
-        bluetoothGatt = device.connectGatt(requireContext(), false, gattCallback)
+        bluetoothGatt = device.connectGatt(getContext(), false, gattCallback)
     }
     private fun checkBluetoothPermissionAndStart() {
         // Definimos as permissões necessárias baseadas na versão do Android
@@ -152,7 +159,8 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
 
         // Verifica se TODAS as permissões do array já estão concedidas
         val allPermissionsGranted = bluetoothPermissions.all {
-            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+            val context = context ?: return
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
 
         when {
@@ -181,7 +189,8 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val device = result.device
-            val deviceName = device.name ?: "Desconhecido"
+            //val deviceName = device.name ?: "Desconhecido"
+            val deviceName = result.scanRecord?.deviceName ?: device.name ?: "Desconhecido"
             val deviceAddress = device.address
             // Aqui enviamos o dispositivo encontrado para o Dialog através do Listener
             deviceListUpdateListener?.invoke(device)
@@ -196,7 +205,29 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
     private fun startBleScan() {
         // Verifique se tem permissões antes!
         Log.d(TAG, "Iniciando o Scan Bluetooth...")
-        bleScanner?.startScan(scanCallback)
+        // Limpa qualquer conexão ou scan anterior
+        resetBluetoothState()
+
+        // Pequeno delay opcional (100ms) para o hardware processar o fechamento anterior
+        view?.postDelayed({
+            Log.d(TAG, "Iniciando o Scan agora.")
+            bleScanner?.startScan(scanCallback)
+        }, 100)
+    }
+    @SuppressLint("MissingPermission")
+    private fun resetBluetoothState() {    try {
+        // 1. Para o scan se estiver rodando
+        bleScanner?.stopScan(scanCallback)
+
+        // 2. Fecha e limpa o GATT rigorosamente
+        bluetoothGatt?.disconnect()
+        bluetoothGatt?.close()
+        bluetoothGatt = null
+
+        Log.d(TAG, "Estado do Bluetooth resetado para novo scan.")
+    } catch (e: SecurityException) {
+        Log.e(TAG, "Erro de permissão ao resetar Bluetooth", e)
+    }
     }
     @SuppressLint("MissingPermission")
     private fun stopBleScan() {
@@ -241,6 +272,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
                 if (gatt == bluetoothGatt) {
                     bluetoothGatt = null
                 }
+
                 activity?.runOnUiThread {
                     updateUIDisconnected()
                 }
@@ -359,11 +391,13 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         super.onDestroy()
         try {
             // Garante que o GATT seja fechado e o objeto zerado
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            getContext()?.let {
+                if (ActivityCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                }
             }
             bluetoothGatt?.close()
             bluetoothGatt = null
@@ -377,14 +411,16 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
     override fun onDestroyDialog() {
         try {
             // Garante que o GATT seja fechado e o objeto zerado
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            getContext()?.let {
+                if (ActivityCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                }
             }
-            bluetoothGatt?.close()
-            bluetoothGatt = null
+            //bluetoothGatt?.close()
+            //bluetoothGatt = null
             // Para o scan caso ele ainda esteja ativo
             stopBleScan()
         } catch (e: Exception) {
