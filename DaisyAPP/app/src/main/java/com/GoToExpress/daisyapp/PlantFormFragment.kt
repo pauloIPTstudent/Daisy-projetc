@@ -140,6 +140,13 @@ class PlantFormFragment : Fragment() {
         }
     }
 
+    /* 
+    *Função para salvar a planta
+    * @param name Nome da planta
+    * @param specie Espécie da planta
+    * @param foto Foto da planta em Bitmap
+    * @param context Contexto da aplicação
+     */
     private fun savePlant(name: String,speecie:String, foto: Bitmap, context: Context) {
         // Lógica para salvar no Banco de Dados ou enviar para API
         sendAddPlantResquest(name,speecie){ idRetornado ->
@@ -162,6 +169,12 @@ class PlantFormFragment : Fragment() {
             }
         }
     }
+    /*
+    * Função para editar a planta
+    * @param id ID da planta
+    * @param name Nome da planta
+    * @param specie Espécie da planta
+     */
     private fun editPlant(id: Int, name: String, specie: String) {
         sendEditResquest(id, name, specie) { sucesso ->
             if (sucesso == true) {
@@ -178,7 +191,9 @@ class PlantFormFragment : Fragment() {
             }
         }
     }
-
+    /*
+    * Função para abrir a câmera 
+    */
     private fun openCamera() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
@@ -187,7 +202,9 @@ class PlantFormFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.camera_permission_error, Toast.LENGTH_SHORT).show()
         }
     }
-
+    /*
+    * Função para verificar permissão da câmera e abrir a câmera
+    */
     private fun checkCameraPermissionAndOpen() {
         when {
             // Caso 1: A permissão já foi concedida
@@ -204,7 +221,12 @@ class PlantFormFragment : Fragment() {
             }
         }
     }
-
+    /*
+    * Função para enviar a requisição de adicionar uma planta
+    * @param name Nome da planta
+    * @param specie Espécie da planta
+    * @param onResult Callback para tratar o resultado da requisição
+    */
     private fun sendAddPlantResquest(name: String, specie: String, onResult: (Int?) -> Unit) {
         val plantRequest = PlantRequest(name, specie, "Descrição opcional")
         val token = SessionManager.fetchAuthToken(requireContext())
@@ -230,7 +252,13 @@ class PlantFormFragment : Fragment() {
             onResult(null)
         }
     }
-
+    /*
+        * Função para enviar a requisição de editar uma planta
+        * @param id ID da planta
+        * @param name Nome da planta
+        * @param specie Espécie da planta
+        * @param onResult Callback para tratar o resultado da requisição
+    */
     private fun sendEditResquest(id: Int,name: String, specie: String, onResult: (Boolean?) -> Unit) {
         Log.d("DEBUG_EDIT", "Iniciando Edição - ID: $id, Nome: $name, Especie: $specie")
         val editplantRequest = EditPlantRequest(id,name, specie, "Descrição opcional")

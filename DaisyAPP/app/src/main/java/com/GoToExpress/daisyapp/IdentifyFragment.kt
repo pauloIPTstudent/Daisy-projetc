@@ -209,6 +209,7 @@ class IdentifyFragment : Fragment() {
         }
 
     }
+    /* Função para compartilhar a foto */
     private fun compartilharFoto() {
         // Garantir que temos um Bitmap
         // Pega o drawable do ImageView

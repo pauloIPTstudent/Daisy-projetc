@@ -18,6 +18,7 @@ class PlantAdapter(private var plants: List<Plant>,private val listener: OnItemC
         val delete: ImageButton = view.findViewById<ImageButton>(R.id.btn_delete_plant)
 
     }
+    /* Interface para lidar com cliques em itens da lista de plantas */
     interface OnItemClickListener {
         fun onItemClick(data: Plant)
         fun onDeleteClick(id: Int)

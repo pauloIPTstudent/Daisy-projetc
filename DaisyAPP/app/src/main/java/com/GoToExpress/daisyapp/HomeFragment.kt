@@ -171,7 +171,7 @@ class HomeFragment : Fragment() {
             ))
         }
     }
-
+    /* Função para obter a última localização */
     @SuppressLint("MissingPermission")
     private fun getLastLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -223,7 +223,7 @@ class HomeFragment : Fragment() {
             }
         })
     }
-
+    /* Função para realizar a busca de plantas */
     private fun performSearch(query: String) {
         val token = SessionManager.fetchAuthToken(requireContext())
         if (token != null) {
@@ -246,7 +246,7 @@ class HomeFragment : Fragment() {
             })
         }
     }
-
+    /* Função para navegar para uma planta específica */
     private fun goToPlant(plant: Plant) {
         val bundle = Bundle().apply {
             putInt("EXTRA_ID", plant.id)

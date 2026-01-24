@@ -116,6 +116,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             dialog.show(parentFragmentManager, "SensorDialog")
 
             val btnLerSensor = view.findViewById<Button>(R.id.btn_sensor_read)
+            /* Função para solicitar leitura do sensor */
             btnLerSensor.setOnClickListener @androidx.annotation.RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT) {
                 getContext()?.let { it1 ->
                     if (ActivityCompat.checkSelfPermission(
@@ -135,6 +136,10 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
 
         }
     }
+    /* 
+    * Função para conectar ao dispositivo Bluetooth 
+    * @param device Dispositivo Bluetooth a ser conectado 
+    */
     @SuppressLint("MissingPermission")
     private fun connectToDevice(device: BluetoothDevice) {
         Log.d("BLE_LOG", "Iniciando conexão com: ${device.name}")
@@ -144,6 +149,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         // false indica que queremos conectar diretamente agora, sem esperar
         bluetoothGatt = device.connectGatt(getContext(), false, gattCallback)
     }
+    /* Função para verificar permissões Bluetooth e iniciar o scan */
     private fun checkBluetoothPermissionAndStart() {
         // Definimos as permissões necessárias baseadas na versão do Android
         val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -174,6 +180,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         }
     }
 
+    /* Função para solicitar permissões Bluetooth */
     private val requestBluetoothPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -185,6 +192,9 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             // Exiba uma mensagem: "Permissão negada. Não podemos buscar o sensor."
         }
     }
+    /*
+     * Função para solicitar permissões Bluetooth
+     */
     @SuppressLint("MissingPermission")
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -201,6 +211,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             Log.e(TAG, "Erro no Scan: Código $errorCode")
         }
     }
+    /* Função para iniciar o scan Bluetooth */
     @SuppressLint("MissingPermission")
     private fun startBleScan() {
         // Verifique se tem permissões antes!
@@ -214,6 +225,9 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             bleScanner?.startScan(scanCallback)
         }, 100)
     }
+    /*
+     * Função para resetar o estado do Bluetooth
+     */
     @SuppressLint("MissingPermission")
     private fun resetBluetoothState() {    try {
         // 1. Para o scan se estiver rodando
@@ -234,6 +248,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
         Log.d(TAG, "Parando o Scan Bluetooth.")
         bleScanner?.stopScan(scanCallback)
     }
+    /* Função para solicitar permissões Bluetooth */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun solicitarLeituraDoSensor() {
         if (bluetoothGatt == null) {
@@ -252,7 +267,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             Log.e("BLE_LOG", "Característica de leitura não encontrada!")
         }
     }
-
+    /* Callback para lidar com eventos do GATT */
     @SuppressLint("MissingPermission")
     private val gattCallback = object : BluetoothGattCallback() {
 
@@ -284,7 +299,7 @@ class DiagnoseFragment : Fragment(), SensorSetupDialog.OnDestroyListener {
             }
         }
 
-        // ESTE É O MÉTODO QUE RECEBE A RESPOSTA DO SEU BOTÃO
+        // ESTE É O MÉTODO QUE RECEBE A RESPOSTA DO BOTÃO
         override fun onCharacteristicRead(gatt: BluetoothGatt, char: BluetoothGattCharacteristic, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 //Dado a natureza do BLE só consigo passa 23 bytes por emissão,

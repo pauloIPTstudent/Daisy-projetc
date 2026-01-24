@@ -1,6 +1,7 @@
 data class PlantResponse( //Getplants
     val plants: List<Plant> // O nome "plants" deve ser igual ao que aparece no JSON
 )
+// Plant Model
 data class Plant(
     val id: Int,
     val name: String,
@@ -19,7 +20,7 @@ data class CreatePlantResponse(
     val id: Int,
     val success: Boolean
 )
-//
+// O que você envia para a API \\Edit
 data class EditPlantRequest(
     val id: Int,
     val name: String,
@@ -30,27 +31,27 @@ data class EditPlantRequest(
 data class EditPlantResponse(
     val success: Boolean
 )
-
+// O que você envia para a API \\Delete
 data class DeletePlantRequest(
     val id:Int
 )
-
+// O que a API devolve (200) \\Delete
 data class DeletePlatResponse(
     val success: Boolean
 )
-
+// O que você envia para a API \\Identify
 data class IdentifyPlantResponse(
     val common_name: String,
     val species: String,
     val score: Float
 )
 
-
+// Weather API
 data class WeatherRequest(
     val lat: Double,
     val lon: Double
 )
-
+// O que a API devolve \\Weather
 data class WeatherResponse(
     val celsius: Float,
     val cidade: String,

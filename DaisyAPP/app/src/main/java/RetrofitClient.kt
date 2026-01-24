@@ -1,6 +1,6 @@
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+/* Classe que configura o Retrofit para fazer chamadas HTTP */
 object RetrofitClient {
     private const val BASE_URL = "https://dam-api-ribg.onrender.com/"
 

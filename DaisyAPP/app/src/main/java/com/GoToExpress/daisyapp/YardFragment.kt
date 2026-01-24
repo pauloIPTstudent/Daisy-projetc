@@ -68,7 +68,9 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
         loadPlants()
 
     }
-
+    /*
+    * Função chamada quando o botão de excluir é clicado
+    */
     override fun onDeleteClick(id: Int) {
         val request :DeletePlantRequest = DeletePlantRequest(id)
         val token = SessionManager.fetchAuthToken(requireContext())
@@ -98,6 +100,9 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
         })
 
         }
+    /*
+    * Função chamada quando o item da lista é clicado
+    */
     override fun onItemClick(data: Plant) {
         // 1. Criar o Bundle com as mesmas chaves que você definiu no PlantFormFragment
         val bundle = Bundle().apply {
@@ -117,9 +122,19 @@ class YardFragment : Fragment() ,PlantAdapter.OnItemClickListener {
             .commit()
 
     }
+    
+
+    /*
+    * função para configurar o RecyclerView com a lista de plantas obtida da API
+    * @param plantList Lista de plantas obtida da API
+    */
     private fun setupRecyclerView(plantList: List<Plant>) {
         plantAdapter.updateData(plantList)
     }
+
+    /*
+    * Função para carregar as plantas do utilizador a partir da API
+    */
     fun loadPlants() {
         // 1. Recuperar o token guardado
         val token = SessionManager.fetchAuthToken(requireContext())

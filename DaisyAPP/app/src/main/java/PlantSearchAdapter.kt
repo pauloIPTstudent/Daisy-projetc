@@ -10,17 +10,17 @@ class PlantSearchAdapter(
 ) : RecyclerView.Adapter<PlantSearchAdapter.PlantViewHolder>() {
 
     private var plants = listOf<Plant>()
-
+    /* Função para atualizar os dados da lista de plantas */
     fun setData(newPlants: List<Plant>) {
         this.plants = newPlants
         notifyDataSetChanged()
     }
-
+    /* Função para atualizar os dados da lista de plantas */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_plant_search, parent, false)
         return PlantViewHolder(view)
     }
-
+    /* Função para atualizar os dados da lista de plantas */
     override fun onBindViewHolder(holder: PlantViewHolder, position: Int) {
         val plant = plants[position]
         holder.nameTextView.text = plant.name

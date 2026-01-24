@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             handleNavigation(R.id.nav_home)
         }
     }
-
+    /* Função para lidar com navegação entre fragments */
     fun handleNavigation(selectedId: Int) {
         val fragment = when (selectedId) {
             R.id.nav_home -> HomeFragment()
