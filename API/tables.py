@@ -103,6 +103,37 @@ class Plant(db.Model):
             (Plant.name.ilike(search_pattern)) | (Plant.specie.ilike(search_pattern))
         ).limit(limit).all()
 
+
+# Criando uma tabela (modelo)
+class Sensor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mac = db.Column(db.String(120), nullable=False)
+    token = db.Column(db.String(200), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=True)
+
+    #protegido pelo token do user
+    @staticmethod
+    def associate_sensor(mac,user_id):
+        sensor = Sensor.query.filter_by(mac=mac).firt()
+        if (sensor==None) :
+            sensor = Sensor(mac=mac)
+            db.session.add(sensor)
+            db.session.commit()
+        
+        sensor.token = secrets.token_urlsafe(32)
+        sensor.user_id = user_id
+        db.session.commit()
+        return sensor
+
+    @staticmethod
+    def associate_plant_to_sensor(mac,plant_id):
+        sensor = Sensor.query.filter_by(mac=mac).firt()
+        if sensor :
+            sensor.plant_id = plant_id
+            db.session.commit()
+            return sensor
+        
 # Leituras de sensores (humidade do solo e intensidade de luz) associadas a uma planta
 class Reading(db.Model):
     id = db.Column(db.Integer, primary_key=True)
