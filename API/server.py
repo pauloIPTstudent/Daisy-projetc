@@ -4,7 +4,7 @@ import secrets
 import os
 from datetime import datetime, timezone
 
-from tables import app, db, User, Plant, Reading
+from tables import app, db, User, Plant, Reading, Sensor
 import requests
 
 
@@ -209,23 +209,6 @@ def delete_plant():
     return jsonify({'success': True}), 200
 
 
-@app.route('/sensor_reading', methods=['POST'])
-def sensor_reading():
-    data = request.get_json() or {}
-    plant_id = data.get('plant_id')
-    humidity = data.get('humidity')
-    light = data.get('light')
-
-    if not plant_id:
-        return jsonify({'error': 'plant_id required'}), 400
-
-    plant = Plant.query.filter_by(id=plant_id).first()
-    if not plant:
-        return jsonify({'error': 'plant not found'}), 404
-
-    Reading.create_reading(plant_id, humidity, light)
-    return jsonify({'success': True}), 201
-
 @app.route('/weather', methods=['POST'])
 def weather():
     # 1. Captura os dados enviados pelo sensor/cliente
@@ -306,6 +289,113 @@ def identify():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Erro na API PlantNet: {str(e)}"}), 500
+
+
+
+
+
+#################################IoT##############################
+
+@app.route('/register_sensor', methods=['POST'])
+def register_sensor():
+    data = request.get_json() or {}
+    mac = data.get('mac')
+    token = get_token_from_request(request) or data.get('token')
+
+    if not mac or not token:
+        return jsonify({'error': 'mac and user token required'}), 400
+
+    user = User.get_user_by_token(token)
+    if not user:
+        return jsonify({'error': 'invalid user token'}), 401
+
+    # Associa sensor ao user, gera token do sensor se não tiver
+    sensor = Sensor.associate_sensor(mac, user.id)
+
+    return jsonify({
+        'sensor_mac': sensor.mac,
+        'sensor_token': sensor.token,
+        'user_id': sensor.user_id
+    }), 201
+
+@app.route('/assign_sensor_plant', methods=['POST'])
+def assign_sensor_plant():
+    data = request.get_json() or {}
+    mac = data.get('mac')
+    plant_id = data.get('plant_id')
+    token = get_token_from_request(request) or data.get('token')
+
+    if not mac or not plant_id or not token:
+        return jsonify({'error': 'mac, plant_id and user token required'}), 400
+
+    user = User.get_user_by_token(token)
+    if not user:
+        return jsonify({'error': 'invalid user token'}), 401
+
+    plant = Plant.query.filter_by(id=plant_id, user_id=user.id).first()
+    if not plant:
+        return jsonify({'error': 'plant not found or not owned by user'}), 404
+
+    sensor = Sensor.associate_plant_to_sensor(mac, plant_id)
+    if not sensor:
+        return jsonify({'error': 'sensor not found'}), 404
+
+    return jsonify({
+        'sensor_mac': sensor.mac,
+        'plant_id': sensor.plant_id
+    }), 200
+
+@app.route('/list_sensors', methods=['GET'])
+def list_sensors():
+    token = get_token_from_request(request) or request.args.get('token')
+    user = User.get_user_by_token(token)
+    if not user:
+        return jsonify({'error': 'invalid token'}), 401
+
+    sensors = Sensor.query.filter_by(user_id=user.id).all()
+    result = [{
+        'mac': s.mac,
+        'sensor_token': s.token,
+        'plant_id': s.plant_id
+    } for s in sensors]
+
+    return jsonify({'sensors': result}), 200
+
+@app.route('/validate_sensor', methods=['POST'])
+def validate_sensor():
+    data = request.get_json() or {}
+    sensor_token = data.get('sensor_token')
+    if not sensor_token:
+        return jsonify({'error': 'sensor_token required'}), 400
+
+    sensor = Sensor.query.filter_by(token=sensor_token).first()
+    if not sensor:
+        return jsonify({'error': 'invalid sensor token'}), 401
+
+    return jsonify({
+        'sensor_mac': sensor.mac,
+        'user_id': sensor.user_id,
+        'plant_id': sensor.plant_id
+    }), 200
+
+@app.route('/sensor_reading', methods=['POST'])
+def sensor_reading():
+    data = request.get_json() or {}
+    plant_id = data.get('plant_id')
+    humidity = data.get('humidity')
+    light = data.get('light')
+
+    if not plant_id:
+        return jsonify({'error': 'plant_id required'}), 400
+
+    plant = Plant.query.filter_by(id=plant_id).first()
+    if not plant:
+        return jsonify({'error': 'plant not found'}), 404
+
+    Reading.create_reading(plant_id, humidity, light)
+    return jsonify({'success': True}), 201
+
+#####################################################################
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
