@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.material.button.MaterialButton
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import retrofit2.Call
 import java.io.File
@@ -68,7 +69,7 @@ class IdentifyFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         val byteArray = stream.toByteArray()
         Log.d("IdentifyFragment", "Tamanho do arquivo: ${byteArray.size} bytes")
-        val requestFile = okhttp3.RequestBody.create(okhttp3.MediaType.parse("image/jpeg"), byteArray)
+        val requestFile = okhttp3.RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
         val body = MultipartBody.Part.createFormData("image", "plant.jpg", requestFile)
 
 

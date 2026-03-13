@@ -72,7 +72,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Turn on the bluetooth"
+                        android:text="Turn on the wifi"
                         android:gravity="center"
                         android:textSize="12sp"
                         android:textStyle="bold"/>
@@ -113,6 +113,7 @@
                     android:layout_gravity="start"
                     android:textColor="#6B8E00"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:visibility="invisible"
                     />
                 <Button
                     android:id="@+id/btnGoToStep2"
@@ -132,6 +133,16 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvTitleWifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose your sensor"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -144,7 +155,44 @@
 
             </ScrollView>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/step3Layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Configure sua rede Wi-Fi"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
+            <EditText
+                android:id="@+id/ssidEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="SSID da rede"
+                android:inputType="text"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Senha da rede"
+                android:inputType="textPassword"
+                android:layout_marginTop="8dp"/>
+
+            <Button
+                android:id="@+id/btnSendWifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enviar credenciais"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="#6B8E00"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
     </ViewFlipper>
 
 
