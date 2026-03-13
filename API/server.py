@@ -300,15 +300,14 @@ def identify():
 def register_sensor():
     data = request.get_json() or {}
     mac = data.get('mac')
-    user_id = data.get('user_id')  # agora recebemos o ID do usuário
+    token = get_token_from_request(request) or data.get('token')
 
-    if not mac or not user_id:
+    if not mac or not token:
         return jsonify({'error': 'mac and user_id required'}), 400
 
-    # Verifica se o usuário existe
-    user = User.query.filter_by(id=user_id).first()
+    user = User.get_user_by_token(token)
     if not user:
-        return jsonify({'error': 'invalid user_id'}), 401
+        return jsonify({'error': 'invalid token'}), 401
 
     # Associa sensor ao user, gera token do sensor se não tiver
     sensor = Sensor.associate_sensor(mac, user.id)
