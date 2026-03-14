@@ -381,12 +381,20 @@ def validate_sensor():
 @app.route('/sensor_reading', methods=['POST'])
 def sensor_reading():
     data = request.get_json() or {}
-    plant_id = data.get('plant_id')
+    sensor_token = data.get('sensor_token')
     humidity = data.get('humidity')
     light = data.get('light')
 
+    if not sensor_token:
+        return jsonify({'error': 'sensor_token required'}), 400
+
+    sensor = Sensor.query.filter_by(token=sensor_token).first()
+    if not sensor:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+    plant_id = sensor.plant_id
     if not plant_id:
-        return jsonify({'error': 'plant_id required'}), 400
+        return jsonify({'error': 'sensor is not associated with a plant'}), 404
 
     plant = Plant.query.filter_by(id=plant_id).first()
     if not plant:

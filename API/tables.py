@@ -125,7 +125,13 @@ class Sensor(db.Model):
         sensor.user_id = user_id
         db.session.commit()
         return sensor
-
+    
+    @staticmethod
+    def get_sensor_by_token(token):
+        if not token:
+            return None
+        return Sensor.query.filter_by(token=token).first()
+    
     @staticmethod
     def associate_plant_to_sensor(mac,plant_id):
         sensor = Sensor.query.filter_by(mac=mac).firt()
@@ -150,7 +156,7 @@ class Reading(db.Model):
         db.session.add(reading)
         db.session.commit()
         return reading
-
+    
     @staticmethod
     def get_readings_by_plant_timeframe(plant_id, start_time, end_time):
         return Reading.query.filter(
