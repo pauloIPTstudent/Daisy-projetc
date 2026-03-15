@@ -112,10 +112,9 @@ class Sensor(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=True)
 
-    #protegido pelo token do user
     @staticmethod
     def associate_sensor(mac,user_id):
-        sensor = Sensor.query.filter_by(mac=mac).firt()
+        sensor = Sensor.query.filter_by(mac=mac).first()
         if (sensor==None) :
             sensor = Sensor(mac=mac)
             db.session.add(sensor)

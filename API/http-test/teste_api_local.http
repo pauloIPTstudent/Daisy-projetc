@@ -3,7 +3,7 @@ POST http://localhost:5000/create_account
 Content-Type: application/json
 
 {
-  "email": "user3@email.com",
+  "email": "user5@email.com",
   "password": "123qwe#"
 }
 ### POST para login
@@ -66,4 +66,11 @@ Content-Type: application/json
   "start_time": "2025-12-20T00:00:00Z",
   "end_time": "2025-12-22T00:00:00Z"
 }
+### POST registrar sensor (token no body)
+POST http://localhost:5000/register_sensor
+Content-Type: application/json
 
+{
+  "mac": "B8:27:EB:12:34:56",
+  "token": "9pcaU8VcCyn7UyN0f76_TtNwCmG_4OMIeJynTfTWILk"
+}
