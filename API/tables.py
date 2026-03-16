@@ -133,7 +133,7 @@ class Sensor(db.Model):
     
     @staticmethod
     def associate_plant_to_sensor(mac,plant_id):
-        sensor = Sensor.query.filter_by(mac=mac).firt()
+        sensor = Sensor.query.filter_by(mac=mac).first()
         if sensor :
             sensor.plant_id = plant_id
             db.session.commit()
