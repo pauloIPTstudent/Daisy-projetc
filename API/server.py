@@ -392,16 +392,62 @@ def sensor_reading():
     if not sensor:
         return jsonify({'error': 'invalid sensor token'}), 401
     
+    if not sensor.id:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
     plant_id = sensor.plant_id
-    if not plant_id:
-        return jsonify({'error': 'sensor is not associated with a plant'}), 404
+    #if not plant_id:
+        #return jsonify({'error': 'sensor is not associated with a plant'}), 404
 
-    plant = Plant.query.filter_by(id=plant_id).first()
-    if not plant:
-        return jsonify({'error': 'plant not found'}), 404
+    #plant = Plant.query.filter_by(id=plant_id).first()
+    #if not plant:
+    #    return jsonify({'error': 'plant not found'}), 404
 
-    Reading.create_reading(plant_id, humidity, light)
+    Reading.create_reading(sensor.id, plant_id, humidity, light)
     return jsonify({'success': True}), 201
+
+@app.route('/sensor_readings', methods=['GET'])
+def get_sensor_readings():
+    # params: plant_id (required), start_time (ISO), end_time (ISO)
+    #token = get_token_from_request(request) or request.args.get('token')
+    mac = request.args.get('mac') or (request.get_json(silent=True) or {}).get('mac')
+    start_ts = request.args.get('start_time') or (request.get_json(silent=True) or {}).get('start_time')
+    end_ts = request.args.get('end_time') or (request.get_json(silent=True) or {}).get('end_time')
+
+    #if not token or not plant_id:
+    #    return jsonify({'error': 'token and plant_id required'}), 400
+
+    #user = User.get_user_by_token(token)
+    #if not user:
+    #    return jsonify({'error': 'invalid token'}), 401
+
+    sensor = Sensor.query.filter_by(mac=mac).first()
+    if not sensor:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+
+    start_dt = parse_iso(start_ts) if start_ts else None
+    if start_ts and start_dt is None:
+        return jsonify({'error': 'invalid start_time format, use ISO (e.g. 2025-12-01T00:00:00Z)'}), 400
+    end_dt = parse_iso(end_ts) if end_ts else None
+    if end_ts and end_dt is None:
+        return jsonify({'error': 'invalid end_time format, use ISO (e.g. 2025-12-21T23:59:59Z)'}), 400
+
+    if start_dt and end_dt and start_dt > end_dt:
+        return jsonify({'error': 'start_time must be before or equal to end_time'}), 400
+
+    readings = Reading.get_readings_by_sensor_timeframe(sensor.id, start_dt, end_dt)
+    result = [
+        {
+            'id': r.id,
+            'timestamp': r.timestamp.isoformat(),
+            'humidity': r.humidity,
+            'light': r.light,
+            'temperature': r.temperature,
+            'plant_id':r.plant_id,
+        }
+        for r in readings
+    ]
+    return jsonify({'readings': result}), 200
 
 #####################################################################
 

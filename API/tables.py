@@ -142,16 +142,19 @@ class Sensor(db.Model):
 # Leituras de sensores (humidade do solo e intensidade de luz) associadas a uma planta
 class Reading(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=False)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'), nullable=False)
+    plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     humidity = db.Column(db.Float, nullable=True)
     light = db.Column(db.Float, nullable=True)
+    temperature = db.Column(db.Float, nullable=True)
+
 
     plant = db.relationship('Plant', backref=db.backref('readings', lazy=True))
 
     @staticmethod
-    def create_reading(plant_id, humidity=None, light=None):
-        reading = Reading(plant_id=plant_id, humidity=humidity, light=light, timestamp=datetime.now(timezone.utc))
+    def create_reading(sensor_id,plant_id=None, humidity=None, light=None,temperature=None):
+        reading = Reading(sensor_id=sensor_id, plant_id=plant_id, humidity=humidity, light=light, temperature=temperature, timestamp=datetime.now(timezone.utc))
         db.session.add(reading)
         db.session.commit()
         return reading
@@ -160,6 +163,14 @@ class Reading(db.Model):
     def get_readings_by_plant_timeframe(plant_id, start_time, end_time):
         return Reading.query.filter(
             Reading.plant_id == plant_id,
+            Reading.timestamp >= start_time,
+            Reading.timestamp <= end_time
+        ).all()
+    
+    @staticmethod
+    def get_readings_by_sensor_timeframe(sensor_id, start_time, end_time):
+        return Reading.query.filter(
+            Reading.sensor_id == sensor_id,
             Reading.timestamp >= start_time,
             Reading.timestamp <= end_time
         ).all()
