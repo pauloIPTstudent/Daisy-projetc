@@ -356,6 +356,7 @@ def list_sensors():
     result = [{
         'mac': s.mac,
         'sensor_token': s.token,
+        'name' : s.name,
         'plant_id': s.plant_id
     } for s in sensors]
 
