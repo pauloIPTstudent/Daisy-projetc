@@ -353,12 +353,7 @@ def list_sensors():
         return jsonify({'error': 'invalid token'}), 401
 
     sensors = Sensor.query.filter_by(user_id=user.id).all()
-    result = [{
-        'mac': s.mac,
-        'sensor_token': s.token,
-        'name' : s.name,
-        'plant_id': s.plant_id
-    } for s in sensors]
+    result = [s.to_dict() for s in sensors]
 
     return jsonify({'sensors': result}), 200
 
@@ -379,6 +374,7 @@ def validate_sensor():
         'plant_id': sensor.plant_id
     }), 200
 
+# Guarda a leitura
 @app.route('/sensor_reading', methods=['POST'])
 def sensor_reading():
     data = request.get_json() or {}
@@ -407,6 +403,7 @@ def sensor_reading():
     Reading.create_reading(sensor.id, plant_id, humidity, light)
     return jsonify({'success': True}), 201
 
+#com base no sensor lista as leituras em um intervalo de tempo
 @app.route('/sensor_readings', methods=['GET'])
 def get_sensor_readings():
     # params: plant_id (required), start_time (ISO), end_time (ISO)
@@ -450,6 +447,29 @@ def get_sensor_readings():
     ]
     return jsonify({'readings': result}), 200
 
+@app.route('/last_sensor_readings', methods=['GET'])
+def last_sensor_readings():
+    id = request.args.get('id') or (request.get_json(silent=True) or {}).get('id')
+    sensor = Sensor.query.filter_by(id=id).first()
+    if not sensor:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+    last_read = Reading.last_reading_by_sensor(sensor.id)
+    if not last_read:
+        return jsonify({'error': 'No readings made by this sensor'}), 404
+    
+    return jsonify(last_read.to_dict()), 200
+
+@app.route('/last_plant_readings', methods=['GET'])
+def last_plant_readings():
+    id = request.args.get('id') or (request.get_json(silent=True) or {}).get('id')
+    plant = Plant.query.filter_by(id=id).first()
+    if not plant:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+    last_read = Reading.last_reading_by_plant(plant.id)
+    if not last_read:
+        return jsonify({'error': 'No readings found for this plant'}), 404
+    
+    return jsonify(last_read.to_dict()), 200
 #####################################################################
 
 if __name__ == '__main__':

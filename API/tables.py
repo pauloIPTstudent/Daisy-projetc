@@ -1,4 +1,5 @@
 from flask import Flask
+import enum
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 import secrets
@@ -103,6 +104,10 @@ class Plant(db.Model):
             (Plant.name.ilike(search_pattern)) | (Plant.specie.ilike(search_pattern))
         ).limit(limit).all()
 
+class SensorStatus(enum.Enum):
+    OK = "ok"
+    UNSTABLE = "unstable"
+    FAILURE = "failure"
 
 # Criando uma tabela (modelo)
 class Sensor(db.Model):
@@ -112,7 +117,21 @@ class Sensor(db.Model):
     token = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=True)
+    battery = db.Column(db.Integer, nullable=True)
+    light_sensor_status = db.Column(db.Enum(SensorStatus), default=SensorStatus.OK, nullable=True)    
+    temperature_sensor_status = db.Column(db.Enum(SensorStatus), default=SensorStatus.OK, nullable=True)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "mac": self.mac,
+            "battery": self.battery,
+            # Importante: tratar o Enum para string
+            "light_sensor_status": self.light_sensor_status.value if self.light_sensor_status else None,
+            "temperature_sensor_status": self.temperature_sensor_status.value if self.temperature_sensor_status else None,
+        }
+    
     @staticmethod
     def associate_sensor(mac,user_id):
         sensor = Sensor.query.filter_by(mac=mac).first()
@@ -149,9 +168,18 @@ class Reading(db.Model):
     humidity = db.Column(db.Float, nullable=True)
     light = db.Column(db.Float, nullable=True)
     temperature = db.Column(db.Float, nullable=True)
+    #plant = db.relationship('Plant', backref=db.backref('readings', lazy=True))
 
-
-    plant = db.relationship('Plant', backref=db.backref('readings', lazy=True))
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sensor_id": self.sensor_id,
+            "plant_id": self.plant_id,
+            "timestamp": self.timestamp,
+            "humidity": self.humidity,
+            "light": self.light,
+            "temperature": self.temperature,
+        }
 
     @staticmethod
     def create_reading(sensor_id,plant_id=None, humidity=None, light=None,temperature=None):
@@ -176,7 +204,20 @@ class Reading(db.Model):
             Reading.timestamp <= end_time
         ).all()
     
-    
+    @staticmethod
+    def last_reading_by_sensor(sensor_id):
+        """Retorna a leitura mais recente de um sensor específico."""
+        return Reading.query.filter_by(sensor_id=sensor_id)\
+            .order_by(Reading.timestamp.desc())\
+            .first()
+
+    @staticmethod
+    def last_reading_by_plant(plant_id):
+        """Retorna a leitura mais recente de uma planta específica."""
+        return Reading.query.filter_by(plant_id=plant_id)\
+            .order_by(Reading.timestamp.desc())\
+            .first()
+
 # Criando o banco e tabelas
 with app.app_context():
     db.create_all()
