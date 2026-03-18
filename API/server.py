@@ -380,6 +380,7 @@ def sensor_reading():
     data = request.get_json() or {}
     sensor_token = data.get('sensor_token')
     humidity = data.get('humidity')
+    temperature = data.get('temperature')
     light = data.get('light')
 
     if not sensor_token:
@@ -400,10 +401,10 @@ def sensor_reading():
     #if not plant:
     #    return jsonify({'error': 'plant not found'}), 404
 
-    Reading.create_reading(sensor.id, plant_id, humidity, light)
+    Reading.create_reading(sensor.id, plant_id, humidity, light, temperature)
     return jsonify({'success': True}), 201
 
-#com base no sensor lista as leituras em um intervalo de tempo
+#com base no sensor, lista as leituras em um intervalo de tempo
 @app.route('/sensor_readings', methods=['GET'])
 def get_sensor_readings():
     # params: plant_id (required), start_time (ISO), end_time (ISO)
