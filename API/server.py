@@ -404,6 +404,51 @@ def sensor_reading():
     Reading.create_reading(sensor.id, plant_id, humidity, light, temperature)
     return jsonify({'success': True}), 201
 
+
+
+# Guarda a leitura
+@app.route('/sensor_reading2', methods=['POST'])
+def sensor_reading2():
+    data = request.get_json() or {}
+    sensor_token = data.get('sensor_token')
+    humidity = data.get('humidity')
+    temperature = data.get('temperature')
+    light = data.get('light')
+    battery = data.get('battery')
+    light_sensor_status = data.get('light_sensor_status')
+    temperature_sensor_status = data.get('temperature_sensor_status')
+
+
+    if not sensor_token:
+        return jsonify({'error': 'sensor_token required'}), 400
+
+    sensor = Sensor.query.filter_by(token=sensor_token).first()
+    if not sensor:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+    if not sensor.id:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+
+    # Atualizar informações do sensor se houver mudanças
+    updated = False
+    if battery is not None and sensor.battery != battery:
+        sensor.battery = battery
+        updated = True
+    if light_sensor_status and sensor.light_sensor_status != SensorStatus(light_sensor_status):
+        sensor.light_sensor_status = SensorStatus(light_sensor_status)
+        updated = True
+    if temperature_sensor_status and sensor.temperature_sensor_status != SensorStatus(temperature_sensor_status):
+        sensor.temperature_sensor_status = SensorStatus(temperature_sensor_status)
+        updated = True
+
+    if updated:
+        db.session.commit()  # salva alterações no banco
+
+    Reading.create_reading(sensor.id, sensor.plant_id, humidity, light, temperature)
+    return jsonify({'success': True}), 201
+
+
 #com base no sensor, lista as leituras em um intervalo de tempo
 @app.route('/sensor_readings', methods=['GET'])
 def get_sensor_readings():
