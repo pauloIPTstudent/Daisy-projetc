@@ -127,6 +127,7 @@ class Sensor(db.Model):
             "name": self.name,
             "mac": self.mac,
             "battery": self.battery,
+            "plant_id": self.plant_id,
             # Importante: tratar o Enum para string
             "light_sensor_status": self.light_sensor_status.value if self.light_sensor_status else None,
             "temperature_sensor_status": self.temperature_sensor_status.value if self.temperature_sensor_status else None,
