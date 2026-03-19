@@ -516,6 +516,69 @@ def last_plant_readings():
         return jsonify({'error': 'No readings found for this plant'}), 404
     
     return jsonify(last_read.to_dict()), 200
+
+
+
+@app.route('/sensor/by_hour', methods=['POST'])
+def get_last_hour_readings():
+    data = request.get_json() or {}
+    sensor_id = data.get('id')
+    interval = data.get('interval') #horas
+
+    if not interval:
+        return jsonify({"error": "interval is required"}), 400
+    
+    try:
+        interval = float(interval)
+        if interval <= 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"error": "interval must be a positive number"}), 400
+    
+    if not sensor_id:
+        return jsonify({"error": "id is required"}), 400
+
+    sensor = Sensor.query.get(sensor_id)
+    if not sensor:
+        return jsonify({"error": "Sensor not found"}), 404
+
+    now = datetime.now(timezone.utc)
+    one_hour_ago = now - timedelta(hours=interval)
+
+    readings = Reading.query.filter(
+        Reading.sensor_id == sensor_id,
+        Reading.timestamp >= one_hour_ago,
+        Reading.timestamp <= now
+    ).order_by(Reading.timestamp.asc()).all()
+
+    if not readings:
+        return jsonify([]), 200
+
+    # 🔹 limitar a 7 pontos
+    max_points = 7
+    total = len(readings)
+
+    if total <= max_points:
+        sampled = readings
+    else:
+        step = total / max_points
+        sampled = [readings[int(i * step)] for i in range(max_points)]
+
+    # 🔹 converter para tempo relativo
+    first_time = sampled[0].timestamp
+
+    result = []
+    for r in sampled:
+        delta_seconds = (r.timestamp - first_time).total_seconds()
+
+        result.append({
+            "t": round(delta_seconds, 2),  # tempo relativo em segundos
+            "humidity": r.humidity,
+            "light": r.light,
+            "temperature": r.temperature
+        })
+
+    return jsonify(result), 200
 #####################################################################
 
 if __name__ == '__main__':
