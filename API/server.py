@@ -435,11 +435,11 @@ def sensor_reading2():
     if battery is not None and sensor.battery != battery:
         sensor.battery = battery
         updated = True
-    if light_sensor_status and sensor.light_sensor_status != SensorStatus(light_sensor_status):
-        sensor.light_sensor_status = SensorStatus(light_sensor_status)
+    if light_sensor_status and sensor.light_sensor_status != light_sensor_status:
+        sensor.light_sensor_status = light_sensor_status
         updated = True
-    if temperature_sensor_status and sensor.temperature_sensor_status != SensorStatus(temperature_sensor_status):
-        sensor.temperature_sensor_status = SensorStatus(temperature_sensor_status)
+    if temperature_sensor_status and sensor.temperature_sensor_status != temperature_sensor_status:
+        sensor.temperature_sensor_status = temperature_sensor_status
         updated = True
 
     if updated:
@@ -452,18 +452,9 @@ def sensor_reading2():
 #com base no sensor, lista as leituras em um intervalo de tempo
 @app.route('/sensor_readings', methods=['GET'])
 def get_sensor_readings():
-    # params: plant_id (required), start_time (ISO), end_time (ISO)
-    #token = get_token_from_request(request) or request.args.get('token')
     mac = request.args.get('mac') or (request.get_json(silent=True) or {}).get('mac')
     start_ts = request.args.get('start_time') or (request.get_json(silent=True) or {}).get('start_time')
     end_ts = request.args.get('end_time') or (request.get_json(silent=True) or {}).get('end_time')
-
-    #if not token or not plant_id:
-    #    return jsonify({'error': 'token and plant_id required'}), 400
-
-    #user = User.get_user_by_token(token)
-    #if not user:
-    #    return jsonify({'error': 'invalid token'}), 401
 
     sensor = Sensor.query.filter_by(mac=mac).first()
     if not sensor:
