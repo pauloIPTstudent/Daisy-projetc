@@ -3,7 +3,7 @@ import re
 import secrets
 import os
 from datetime import datetime, timezone, timedelta
-from tables import app, db, User, Plant, Reading, Sensor
+from tables import app, db, User, Plant, Reading, Sensor, SensorStatus
 import requests
 
 
@@ -434,12 +434,25 @@ def sensor_reading2():
     if battery is not None and sensor.battery != battery:
         sensor.battery = battery
         updated = True
-    if light_sensor_status and sensor.light_sensor_status != light_sensor_status:
-        sensor.light_sensor_status = light_sensor_status
-        updated = True
-    if temperature_sensor_status and sensor.temperature_sensor_status != temperature_sensor_status:
-        sensor.temperature_sensor_status = temperature_sensor_status
-        updated = True
+    try:
+        # Lógica para Light Sensor Status
+        if light_sensor_status:
+            # Converte a string do JSON para o objeto Enum
+            new_status = SensorStatus(light_sensor_status)
+            if sensor.light_sensor_status != new_status:
+                sensor.light_sensor_status = new_status
+                updated = True
+
+        # Lógica para Temperature Sensor Status
+        if temperature_sensor_status:
+            # Converte a string do JSON para o objeto Enum
+            new_status = SensorStatus(temperature_sensor_status)
+            if sensor.temperature_sensor_status != new_status:
+                sensor.temperature_sensor_status = new_status
+                updated = True
+                
+    except ValueError:
+        return jsonify({'error': 'Invalid status value (must be ok, unstable, or failure)'}), 400
 
     if updated:
         db.session.commit()  # salva alterações no banco
