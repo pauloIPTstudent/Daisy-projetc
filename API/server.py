@@ -2,8 +2,7 @@ from flask import request, jsonify
 import re
 import secrets
 import os
-from datetime import datetime, timezone
-
+from datetime import datetime, timezone, timedelta
 from tables import app, db, User, Plant, Reading, Sensor
 import requests
 
