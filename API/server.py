@@ -519,7 +519,7 @@ def last_plant_readings():
 
 
 
-@app.route('/sensor/by_hour', methods=['POST'])
+@app.route('/sensor_by_hour', methods=['POST'])
 def get_last_hour_readings():
     data = request.get_json() or {}
     sensor_id = data.get('id')
