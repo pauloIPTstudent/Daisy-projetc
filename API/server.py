@@ -242,7 +242,7 @@ def weather():
 
 
 # Configurações da API PlantNet
-API_KEY = "2b10mofs9afa03ALzUWKNuytoO"
+API_KEY = "2b10ltSd3LqoDLMUXtILqG5ntO"
 PROJECT = "all"
 API_ENDPOINT = f"https://my-api.plantnet.org/v2/identify/{PROJECT}?api-key={API_KEY}"
 
