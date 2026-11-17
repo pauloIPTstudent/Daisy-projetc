@@ -48,9 +48,9 @@ Este projeto passou por uma evolução arquitetural profunda para refletir padr�
 ## Estrutura de Pastas do Projeto
 
 ```text
-├──  firmware-esp32/       # Código embarcado em C/C++ (ESP-IDF / FreeRTOS)
-├──  backend-api/          # Servidor REST em Python (Flask) e integração com nuvem
-└──  android-app/          # Aplicação nativa mobile desenvolvida em Android Studio
+├──  ESP32-IoT-main/       # Código embarcado em C/C++ (ESP-IDF / FreeRTOS)
+├──  API/          # Servidor REST em Python (Flask) e integração com nuvem
+└──  DaisyAPP/          # Aplicação nativa mobile desenvolvida em Android Studio
 ```
 
 ---
