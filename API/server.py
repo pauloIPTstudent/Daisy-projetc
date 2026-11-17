@@ -2,9 +2,8 @@ from flask import request, jsonify
 import re
 import secrets
 import os
-from datetime import datetime, timezone
-
-from tables import app, db, User, Plant, Reading, Sensor
+from datetime import datetime, timezone, timedelta
+from tables import app, db, User, Plant, Reading, Sensor, SensorStatus
 import requests
 
 
@@ -243,7 +242,7 @@ def weather():
 
 
 # Configurações da API PlantNet
-API_KEY = "2b10mofs9afa03ALzUWKNuytoO"
+API_KEY = "2b10ltSd3LqoDLMUXtILqG5ntO"
 PROJECT = "all"
 API_ENDPOINT = f"https://my-api.plantnet.org/v2/identify/{PROJECT}?api-key={API_KEY}"
 
@@ -303,18 +302,18 @@ def register_sensor():
     token = get_token_from_request(request) or data.get('token')
 
     if not mac or not token:
-        return jsonify({'error': 'mac and user token required'}), 400
+        return jsonify({'error': 'mac and user_id required'}), 400
 
     user = User.get_user_by_token(token)
     if not user:
-        return jsonify({'error': 'invalid user token'}), 401
+        return jsonify({'error': 'invalid token'}), 401
 
     # Associa sensor ao user, gera token do sensor se não tiver
     sensor = Sensor.associate_sensor(mac, user.id)
 
     return jsonify({
         'sensor_mac': sensor.mac,
-        'sensor_token': sensor.token,
+        'sensor_token': sensor.token,  # token do sensor, não do user
         'user_id': sensor.user_id
     }), 201
 
@@ -353,11 +352,7 @@ def list_sensors():
         return jsonify({'error': 'invalid token'}), 401
 
     sensors = Sensor.query.filter_by(user_id=user.id).all()
-    result = [{
-        'mac': s.mac,
-        'sensor_token': s.token,
-        'plant_id': s.plant_id
-    } for s in sensors]
+    result = [s.to_dict() for s in sensors]
 
     return jsonify({'sensors': result}), 200
 
@@ -378,23 +373,215 @@ def validate_sensor():
         'plant_id': sensor.plant_id
     }), 200
 
+# Guarda a leitura
 @app.route('/sensor_reading', methods=['POST'])
 def sensor_reading():
     data = request.get_json() or {}
-    plant_id = data.get('plant_id')
+    sensor_token = data.get('sensor_token')
     humidity = data.get('humidity')
+    temperature = data.get('temperature')
     light = data.get('light')
 
-    if not plant_id:
-        return jsonify({'error': 'plant_id required'}), 400
+    if not sensor_token:
+        return jsonify({'error': 'sensor_token required'}), 400
 
-    plant = Plant.query.filter_by(id=plant_id).first()
-    if not plant:
-        return jsonify({'error': 'plant not found'}), 404
+    sensor = Sensor.query.filter_by(token=sensor_token).first()
+    if not sensor:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+    if not sensor.id:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+    plant_id = sensor.plant_id
+    #if not plant_id:
+        #return jsonify({'error': 'sensor is not associated with a plant'}), 404
 
-    Reading.create_reading(plant_id, humidity, light)
+    #plant = Plant.query.filter_by(id=plant_id).first()
+    #if not plant:
+    #    return jsonify({'error': 'plant not found'}), 404
+
+    Reading.create_reading(sensor.id, plant_id, humidity, light, temperature)
     return jsonify({'success': True}), 201
 
+
+
+# Guarda a leitura
+@app.route('/sensor_reading2', methods=['POST'])
+def sensor_reading2():
+    data = request.get_json() or {}
+    sensor_token = data.get('sensor_token')
+    humidity = data.get('humidity')
+    temperature = data.get('temperature')
+    light = data.get('light')
+    battery = data.get('battery')
+    light_sensor_status = data.get('light_sensor_status')
+    temperature_sensor_status = data.get('temperature_sensor_status')
+
+
+    if not sensor_token:
+        return jsonify({'error': 'sensor_token required'}), 400
+
+    sensor = Sensor.query.filter_by(token=sensor_token).first()
+    if not sensor:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+    if not sensor.id:
+        return jsonify({'error': 'invalid sensor token'}), 401
+    
+
+    # Atualizar informações do sensor se houver mudanças
+    updated = False
+    if battery is not None and sensor.battery != battery:
+        sensor.battery = battery
+        updated = True
+    try:
+        # Lógica para Light Sensor Status
+        if light_sensor_status:
+            # Converte a string do JSON para o objeto Enum
+            new_status = SensorStatus(light_sensor_status)
+            if sensor.light_sensor_status != new_status:
+                sensor.light_sensor_status = new_status
+                updated = True
+
+        # Lógica para Temperature Sensor Status
+        if temperature_sensor_status:
+            # Converte a string do JSON para o objeto Enum
+            new_status = SensorStatus(temperature_sensor_status)
+            if sensor.temperature_sensor_status != new_status:
+                sensor.temperature_sensor_status = new_status
+                updated = True
+                
+    except ValueError:
+        return jsonify({'error': 'Invalid status value (must be ok, unstable, or failure)'}), 400
+
+    if updated:
+        db.session.commit()  # salva alterações no banco
+
+    Reading.create_reading(sensor.id, sensor.plant_id, humidity, light, temperature)
+    return jsonify({'success': True}), 201
+
+
+#com base no sensor, lista as leituras em um intervalo de tempo
+@app.route('/sensor_readings', methods=['GET'])
+def get_sensor_readings():
+    mac = request.args.get('mac') or (request.get_json(silent=True) or {}).get('mac')
+    start_ts = request.args.get('start_time') or (request.get_json(silent=True) or {}).get('start_time')
+    end_ts = request.args.get('end_time') or (request.get_json(silent=True) or {}).get('end_time')
+
+    sensor = Sensor.query.filter_by(mac=mac).first()
+    if not sensor:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+
+    start_dt = parse_iso(start_ts) if start_ts else None
+    if start_ts and start_dt is None:
+        return jsonify({'error': 'invalid start_time format, use ISO (e.g. 2025-12-01T00:00:00Z)'}), 400
+    end_dt = parse_iso(end_ts) if end_ts else None
+    if end_ts and end_dt is None:
+        return jsonify({'error': 'invalid end_time format, use ISO (e.g. 2025-12-21T23:59:59Z)'}), 400
+
+    if start_dt and end_dt and start_dt > end_dt:
+        return jsonify({'error': 'start_time must be before or equal to end_time'}), 400
+
+    readings = Reading.get_readings_by_sensor_timeframe(sensor.id, start_dt, end_dt)
+    result = [
+        {
+            'id': r.id,
+            'timestamp': r.timestamp.isoformat(),
+            'humidity': r.humidity,
+            'light': r.light,
+            'temperature': r.temperature,
+            'plant_id':r.plant_id,
+        }
+        for r in readings
+    ]
+    return jsonify({'readings': result}), 200
+
+@app.route('/last_sensor_readings', methods=['GET'])
+def last_sensor_readings():
+    id = request.args.get('id') or (request.get_json(silent=True) or {}).get('id')
+    sensor = Sensor.query.filter_by(id=id).first()
+    if not sensor:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+    last_read = Reading.last_reading_by_sensor(sensor.id)
+    if not last_read:
+        return jsonify({'error': 'No readings made by this sensor'}), 404
+    
+    return jsonify(last_read.to_dict()), 200
+
+@app.route('/last_plant_readings', methods=['GET'])
+def last_plant_readings():
+    id = request.args.get('id') or (request.get_json(silent=True) or {}).get('id')
+    plant = Plant.query.filter_by(id=id).first()
+    if not plant:
+        return jsonify({'error': 'sensor not found or not owned by user'}), 404
+    last_read = Reading.last_reading_by_plant(plant.id)
+    if not last_read:
+        return jsonify({'error': 'No readings found for this plant'}), 404
+    
+    return jsonify(last_read.to_dict()), 200
+
+
+
+@app.route('/sensor_by_hour', methods=['POST'])
+def get_last_hour_readings():
+    data = request.get_json() or {}
+    sensor_id = data.get('id')
+    interval = data.get('interval') #horas
+
+    if not interval:
+        return jsonify({"error": "interval is required"}), 400
+    
+    try:
+        interval = float(interval)
+        if interval <= 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"error": "interval must be a positive number"}), 400
+    
+    if not sensor_id:
+        return jsonify({"error": "id is required"}), 400
+
+    sensor = Sensor.query.get(sensor_id)
+    if not sensor:
+        return jsonify({"error": "Sensor not found"}), 404
+
+    now = datetime.now(timezone.utc)
+    one_hour_ago = now - timedelta(hours=interval)
+
+    readings = Reading.query.filter(
+        Reading.sensor_id == sensor_id,
+        Reading.timestamp >= one_hour_ago,
+        Reading.timestamp <= now
+    ).order_by(Reading.timestamp.asc()).all()
+
+    if not readings:
+        return jsonify([]), 200
+
+    # 🔹 limitar a 7 pontos
+    max_points = 7
+    total = len(readings)
+
+    if total <= max_points:
+        sampled = readings
+    else:
+        step = total / max_points
+        sampled = [readings[int(i * step)] for i in range(max_points)]
+
+    # 🔹 converter para tempo relativo
+    first_time = sampled[0].timestamp
+
+    result = []
+    for r in sampled:
+        delta_seconds = (r.timestamp - first_time).total_seconds()
+
+        result.append({
+            "t": round(delta_seconds, 2),  # tempo relativo em segundos
+            "humidity": r.humidity,
+            "light": r.light,
+            "temperature": r.temperature
+        })
+
+    return jsonify(result), 200
 #####################################################################
 
 if __name__ == '__main__':
