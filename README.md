@@ -73,7 +73,7 @@ Este projeto passou por uma evolução arquitetural profunda para refletir padr�
 </details>
 
 <details>
-<summary>✨ <b>Bónus: O Fim do "Bicho de Sete Cabeças" na Configuração IoT</b> <i>(Clique para ver como é simples)</i></summary>
+<summary>✨ <b>Bónus: Guia Passo a Passo (Configuração Inicial do Dispositivo IoT)</b> <i>(Clique para ver como é simples)</i></summary>
 
 <br>
 
