@@ -15,7 +15,7 @@
 
 # Daisy System: Smart Plant Monitoring IoT Ecosystem
 
-O **Daisy System** revoluciona o cuidado das plantas ao conectar hardware embarcado de alta performance a uma aplicação móvel intuitiva, centralizando a telemetria e o estado do seu jardim em tempo real[cite: 5, 21].
+O **Daisy System** revoluciona o cuidado das plantas ao conectar hardware embarcado de alta performance a uma aplicação móvel intuitiva, centralizando a telemetria e o estado do seu jardim em tempo real.
 
 https://github.com/user-attachments/assets/fb6b54b4-cd04-4014-a4a6-05517114090a
 
