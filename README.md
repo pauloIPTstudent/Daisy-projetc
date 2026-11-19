@@ -27,9 +27,9 @@ Este projeto passou por uma evolução arquitetural profunda para refletir padr�
 
 * **Arquitetura Concorrente em Tempo Real:** Firmware embarcado no ESP32 desenvolvido em ESP-IDF/FreeRTOS com tarefas paralelas e comunicação segura via HTTPS/TLS.
 * **Autenticação e Segurança de Dispositivos:** Gestão robusta de identidade por tokens e armazenamento NVS para parelhamento seguro entre o hardware e a nuvem.
-* **Provisionamento Wi-Fi via AP Local:** Configuração inicial feita diretamente pelo servidor web integrado no ESP32 (modo *Access Point*), que transmite as credenciais de rede e tokens de autenticação para o dispositivo antes de fechar o serviço e transitar para o modo de operação normal[cite: 6].
+* **Provisionamento Wi-Fi via AP Local:** Configuração inicial feita diretamente pelo servidor web integrado no ESP32 (modo *Access Point*), que transmite as credenciais de rede e tokens de autenticação para o dispositivo antes de fechar o serviço e transitar para o modo de operação normal.
 * **Integração com Inteligência Artificial:** Reconhecimento botânico automático de espécies através de imagens com consumo de API externa (PlantNet).
-* **Telemetria e Dados em Nuvem:** Backend estruturado em Python/Flask com persistência relacional de métricas de temperatura, luz, humidade e nível de bateria[cite: 13, 22, 30].
+* **Telemetria e Dados em Nuvem:** Backend estruturado em Python/Flask com persistência relacional de métricas de temperatura, luz, humidade e nível de bateria.
 * **Experiência Mobile Completa:** Aplicação Android nativa com painéis dinâmicos, gráficos de histórico temporal e sincronização de dados meteorológicos em tempo real.
 
 
